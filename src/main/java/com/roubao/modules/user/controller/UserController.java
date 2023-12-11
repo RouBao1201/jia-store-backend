@@ -49,7 +49,6 @@ public class UserController {
     }
 
     @Operation(summary = "用户注销", description = "用户注销")
-    @SkipCheckToken
     @PostMapping("/logout")
     public RespResult<Object> logout() {
         userService.logout();

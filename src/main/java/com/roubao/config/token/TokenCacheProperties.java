@@ -18,7 +18,7 @@ public class TokenCacheProperties {
     /**
      * 过期时间（单位秒）
      */
-    private Long expire = 600L;
+    private Long expireAfterAccess = 600L;
     /**
      * 初始化容量
      */

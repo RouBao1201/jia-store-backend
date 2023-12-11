@@ -2,6 +2,7 @@ package com.roubao.config.token;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.roubao.config.thread.CommonThreadPoolHandler;
 import com.roubao.utils.SessionUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * Token缓存持有类
@@ -29,14 +31,25 @@ public class TokenCacheHolder {
 
     private final TokenCacheProperties properties;
 
-    public TokenCacheHolder(TokenCacheProperties properties) {
+    private final CommonThreadPoolHandler commonThreadPoolHandler;
+
+    public TokenCacheHolder(TokenCacheProperties properties, CommonThreadPoolHandler commonThreadPoolHandler) {
         this.properties = properties;
+        this.commonThreadPoolHandler = commonThreadPoolHandler;
+        log.info("初始化Token缓存池:{}", properties);
         // 初始化Token缓存池
         tokenCache = Caffeine.newBuilder()
-                .expireAfterAccess(properties.getExpire(), TimeUnit.SECONDS)
+                // 未访问时过期时间
+                .expireAfterAccess(properties.getExpireAfterAccess(), TimeUnit.SECONDS)
+                // 初始化容量
                 .initialCapacity(properties.getInitialCapacity())
+                // 最大容量
                 .maximumSize(properties.getMaximumSize())
+                // 移除时监听
                 .removalListener((k, v, c) -> log.info("Token缓存被移除，key:{}，value:{}", k, v))
+//                .scheduler(Scheduler.forScheduledExecutorService(threadPoolHandler))
+                // 淘汰策略
+                .evictionListener((k, v, c) -> log.info("Token缓存被淘汰，key:{}，value:{}", k, v))
                 .build();
     }
 
@@ -66,7 +79,7 @@ public class TokenCacheHolder {
      * @return boolean
      */
     public boolean verifyToken(String token) {
-        return getIfAbsent(token) != null;
+        return getUserId(token) != null;
     }
 
     /**
@@ -76,8 +89,8 @@ public class TokenCacheHolder {
      * @return 用户ID
      */
     public Integer getUserId(String token) {
-        Object userId = getIfAbsent(token);
-        if (getIfAbsent(token) == null) {
+        Object userId = get(token, k -> null);
+        if (userId == null) {
             return null;
         }
         return (Integer) userId;
@@ -102,13 +115,17 @@ public class TokenCacheHolder {
         return getUserId(token);
     }
 
+    public Object get(String token, Function<Object, Object> function) {
+        return tokenCache.get(token, function);
+    }
+
     /**
      * 获取缓存数据（不存在则直接返回null,不会造成线程阻塞）
      *
      * @param token token
      * @return Object
      */
-    public Object getIfAbsent(String token) {
+    public Object getIfPresent(String token) {
         return tokenCache.getIfPresent(token);
     }
 
