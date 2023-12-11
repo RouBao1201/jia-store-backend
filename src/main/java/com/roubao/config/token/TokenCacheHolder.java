@@ -5,10 +5,8 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.roubao.utils.SessionUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.Session;
-import org.apache.catalina.connector.Request;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2023/12/11
  **/
 @Slf4j
-@Service
+@Configuration
 @EnableConfigurationProperties(TokenCacheProperties.class)
 public class TokenCacheHolder {
 
