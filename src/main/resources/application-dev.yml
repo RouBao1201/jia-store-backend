@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: jia-store-backend
+  cache:
+    type: caffeine
+  datasource:
+    druid:
+      username: root
+      password: root
+      url: jdbc:mysql://localhost:3306/jiastore?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      initial-size: 10
+      max-active: 50
+      min-idle: 10
+      max-wait: 5000
+      query-timeout: 100
+      transaction-query-timeout: 100
+      phy-timeout-millis: 10000
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+knife4j:
+  setting:
+    language: zh-CN
+springdoc:
+  packages-to-scan: com.roubao.modules
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+interceptor:
+  auth:
+    exclude-patterns:
+      - /css/**
+      - /js/**
+      - /**/doc.html
+      - /**/api-docs/**
+      - /swagger-ui/**
+      - /**/swagger-config/**
+logging:
+  level:
+    root: warn
+    com.roubao: info
+  config: classpath:logback-config.xml
