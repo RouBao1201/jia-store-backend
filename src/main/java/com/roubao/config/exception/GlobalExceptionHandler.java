@@ -26,7 +26,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public RespResult<Object> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
         ObjectError objectError = ex.getBindingResult().getAllErrors().get(0);
-        log.error("GlobalExceptionHandler ==> MethodArgumentNotValidException: {}", objectError.getDefaultMessage());
         return RespResult.error(HttpStatus.BAD_REQUEST.value(), objectError.getDefaultMessage());
     }
 
@@ -43,6 +42,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BaseRuntimeException.class)
     public RespResult<Object> baseRuntimeException(BaseRuntimeException ex) {
+        log.error("GlobalExceptionHandler ==> BaseRuntimeException: {}", ex.getMessage(), ex);
         return RespResult.error(ex.getCode(), ex.getMessage());
     }
 

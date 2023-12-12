@@ -34,8 +34,8 @@ public class LoginReqDto implements Serializable {
 //    @Size(min = 8, message = "密码长度不能小于8位")
     private String password;
 
-    @Schema(name = "type", description = "类型", example = "1")
+//    @Schema(name = "type", description = "类型", example = "1")
 //    @NotNull(message = "类型不能为空")
 //    @ExistIn(intRange = {1}, message = "类型不在可选范围内")
-    private Integer type;
+//    private Integer type;
 }

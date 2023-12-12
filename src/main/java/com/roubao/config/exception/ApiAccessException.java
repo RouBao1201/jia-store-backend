@@ -17,11 +17,6 @@ public class ApiAccessException extends BaseRuntimeException {
         return 40101;
     }
 
-    @Override
-    public String getMessage() {
-        return "接口访问权限校验异常";
-    }
-
     public ApiAccessException() {
     }
 

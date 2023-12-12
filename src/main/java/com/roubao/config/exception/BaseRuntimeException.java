@@ -22,7 +22,10 @@ public class BaseRuntimeException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "服务器异常，请稍后重试";
+        if (super.getMessage() == null) {
+            return "服务器异常，请稍后重试";
+        }
+        return super.getMessage();
     }
 
     public BaseRuntimeException() {

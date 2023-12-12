@@ -23,7 +23,4 @@ public class LoginRespDto implements Serializable {
 
     @Schema(name = "token", description = "token令牌")
     private String token;
-
-    @Schema(name = "currentUser", description = "当前用户信息")
-    private CurrentUserDto currentUser;
 }

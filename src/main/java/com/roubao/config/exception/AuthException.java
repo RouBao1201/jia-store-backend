@@ -20,11 +20,6 @@ public class AuthException extends BaseRuntimeException {
         return HttpStatus.UNAUTHORIZED.value();
     }
 
-    @Override
-    public String getMessage() {
-        return "用户未登录";
-    }
-
     public AuthException() {
         super();
     }

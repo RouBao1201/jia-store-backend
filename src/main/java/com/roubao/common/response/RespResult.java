@@ -54,7 +54,7 @@ public class RespResult<T> implements Serializable {
      * 响应信息
      */
     @Schema(name = "message", description = "响应信息")
-    private String message;
+    private String msg;
 
     /**
      * 响应数据

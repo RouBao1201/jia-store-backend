@@ -20,11 +20,6 @@ public class ParameterCheckException extends BaseRuntimeException {
         return HttpStatus.BAD_REQUEST.value();
     }
 
-    @Override
-    public String getMessage() {
-        return "参数校验异常";
-    }
-
     public ParameterCheckException() {
     }
 
