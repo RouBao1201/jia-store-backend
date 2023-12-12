@@ -5,7 +5,7 @@ spring:
     druid:
       username: root
       password: root
-      url: jdbc:mysql://localhost:3306/jiastore?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+      url: jdbc:mysql://localhost:3306/jia-store?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
       driver-class-name: com.mysql.cj.jdbc.Driver
       initial-size: 10
       max-active: 50
