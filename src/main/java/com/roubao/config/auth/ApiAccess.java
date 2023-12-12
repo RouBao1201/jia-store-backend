@@ -8,12 +8,14 @@ import java.lang.annotation.Target;
 
 /**
  * 权限绑定注解
+ *
+ * @author SongYanBin
  */
 @Target({
         ElementType.METHOD
 })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface CheckAccess {
+public @interface ApiAccess {
     String[] value() default {};
 }

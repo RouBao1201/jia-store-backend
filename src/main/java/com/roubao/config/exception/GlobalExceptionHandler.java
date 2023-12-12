@@ -1,8 +1,6 @@
-package com.roubao.config.response;
+package com.roubao.config.exception;
 
 import com.roubao.common.response.RespResult;
-import com.roubao.config.exception.AuthException;
-import com.roubao.config.exception.ParameterCheckException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,21 +39,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 权限异常
+     * 基础异常处理
      */
-    @ExceptionHandler(AuthException.class)
-    public RespResult<Object> authExceptionHandler(AuthException ex) {
-        log.error("GlobalExceptionHandler ==> AuthExceptionError: {}", ex.getMessage(), ex);
-        return RespResult.error(HttpStatus.FORBIDDEN.value(), ex.getMessage());
-    }
-
-    /**
-     * 参数异常
-     */
-    @ExceptionHandler(ParameterCheckException.class)
-    public RespResult<Object> parameterCheckExceptionHandler(ParameterCheckException ex) {
-        log.error("GlobalExceptionHandler ==> ParameterCheckException: {}", ex.getMessage(), ex);
-        return RespResult.error(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+    @ExceptionHandler(BaseRuntimeException.class)
+    public RespResult<Object> baseRuntimeException(BaseRuntimeException ex) {
+        return RespResult.error(ex.getCode(), ex.getMessage());
     }
 
     /**

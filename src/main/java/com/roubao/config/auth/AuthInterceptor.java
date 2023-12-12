@@ -68,7 +68,7 @@ public class AuthInterceptor implements HandlerInterceptor {
      * 校验用户接口访问权限
      */
     private void checkAccess(HandlerMethod handler) {
-        CheckAccess checkAccessAnno = handler.getMethod().getAnnotation(CheckAccess.class);
+        ApiAccess checkAccessAnno = handler.getMethod().getAnnotation(ApiAccess.class);
         if (checkAccessAnno != null) {
             String[] value = checkAccessAnno.value();
             if (value.length == 0) {

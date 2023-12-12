@@ -1,5 +1,7 @@
 package com.roubao.config.exception;
 
+import org.springframework.http.HttpStatus;
+
 import java.io.Serial;
 
 /**
@@ -9,9 +11,19 @@ import java.io.Serial;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/12/10
  **/
-public class ParameterCheckException extends RuntimeException {
+public class ParameterCheckException extends BaseRuntimeException {
     @Serial
     private static final long serialVersionUID = 8276742042262341394L;
+
+    @Override
+    public int getCode() {
+        return HttpStatus.BAD_REQUEST.value();
+    }
+
+    @Override
+    public String getMessage() {
+        return "参数校验异常";
+    }
 
     public ParameterCheckException() {
     }
@@ -20,11 +32,11 @@ public class ParameterCheckException extends RuntimeException {
         super(message);
     }
 
-    public ParameterCheckException(Throwable cause) {
-        super(cause);
-    }
-
     public ParameterCheckException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    public ParameterCheckException(Throwable cause) {
+        super(cause);
     }
 }
