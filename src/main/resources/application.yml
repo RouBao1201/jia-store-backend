@@ -3,5 +3,7 @@ server:
   servlet:
     context-path: /api/v1
 spring:
+  application:
+    name: jia-store-backend
   profiles:
     active: dev

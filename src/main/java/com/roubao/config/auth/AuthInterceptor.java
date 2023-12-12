@@ -1,6 +1,7 @@
 package com.roubao.config.auth;
 
 import com.roubao.config.exception.AuthException;
+import com.roubao.config.superadmin.SuperAdmin;
 import com.roubao.config.token.TokenCacheHolder;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.service.UserService;
@@ -26,31 +27,57 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {
-            // 有跳过Token校验注解则不校验
-            SkipCheckToken skipCheckTokenAnno = ((HandlerMethod) handler).getMethod().getAnnotation(SkipCheckToken.class);
-            if (skipCheckTokenAnno == null) {
-                // 校验token合法性
-                String token = request.getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
-                TokenCacheHolder tokenCacheHolder = SpringContextHolder.getBean(TokenCacheHolder.class);
-                if (token == null || !tokenCacheHolder.verifyToken(token)) {
-                    throw new AuthException("用户登录失效，请重新登录");
-                }
+            // 校验超级管理员是否上线（无敌的存在）
+            if (this.checkSuperAdminOnline()) {
+                return true;
             }
-
+            // token校验
+            this.checkToken(request, (HandlerMethod) handler);
             // 校验用户权限
-            CheckAccess checkAccessAnno = ((HandlerMethod) handler).getMethod().getAnnotation(CheckAccess.class);
-            if (checkAccessAnno != null) {
-                String[] value = checkAccessAnno.value();
-                if (value.length == 0) {
-                    return true;
-                } else {
-                    UserService userServiceBean = SpringContextHolder.getBean(UserService.class);
-                    CurrentUserDto currentUser = userServiceBean.getCurrentUser();
-                    // TODO 用户权限校验
-                }
-            }
+            this.checkAccess((HandlerMethod) handler);
         }
         return true;
+    }
+
+    /**
+     * 校验超级管理员是否上线
+     */
+    private boolean checkSuperAdminOnline() {
+        // 超级管理员是无敌的存在
+        SuperAdmin superAdminBean = SpringContextHolder.getBean(SuperAdmin.class, true);
+        return superAdminBean != null;
+    }
+
+    /**
+     * token校验
+     */
+    private void checkToken(HttpServletRequest request, HandlerMethod handler) {
+        // 有跳过Token校验注解则不校验
+        DisableToken disableToken = handler.getMethod().getAnnotation(DisableToken.class);
+        if (disableToken == null) {
+            // 校验token合法性
+            String token = request.getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
+            TokenCacheHolder tokenCacheHolder = SpringContextHolder.getBean(TokenCacheHolder.class);
+            if (token == null || !tokenCacheHolder.verifyToken(token)) {
+                throw new AuthException("用户登录失效，请重新登录");
+            }
+        }
+    }
+
+    /**
+     * 校验用户接口访问权限
+     */
+    private void checkAccess(HandlerMethod handler) {
+        CheckAccess checkAccessAnno = handler.getMethod().getAnnotation(CheckAccess.class);
+        if (checkAccessAnno != null) {
+            String[] value = checkAccessAnno.value();
+            if (value.length == 0) {
+            } else {
+                UserService userServiceBean = SpringContextHolder.getBean(UserService.class);
+                CurrentUserDto currentUser = userServiceBean.getCurrentUser();
+                // TODO 用户权限校验 不通过则抛出AuthException终止程序
+            }
+        }
     }
 
     @Override

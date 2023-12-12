@@ -1,7 +1,7 @@
 package com.roubao.modules.user.controller;
 
 import com.roubao.common.response.RespResult;
-import com.roubao.config.auth.SkipCheckToken;
+import com.roubao.config.auth.DisableToken;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
 import com.roubao.modules.user.dto.RegisterReqDto;
@@ -35,14 +35,14 @@ public class UserController {
     private UserService userService;
 
     @Operation(summary = "用户登录", description = "用户登录")
-    @SkipCheckToken
+    @DisableToken
     @PostMapping("/login")
     public RespResult<LoginRespDto> login(@Validated @RequestBody LoginReqDto reqDto) {
         return RespResult.success("登录成功", userService.login(reqDto));
     }
 
     @Operation(summary = "用户注册", description = "用户注册")
-    @SkipCheckToken
+    @DisableToken
     @PostMapping("/register")
     public RespResult<Integer> register(@Validated @RequestBody RegisterReqDto reqDto) {
         return RespResult.success("注册成功", userService.register(reqDto));

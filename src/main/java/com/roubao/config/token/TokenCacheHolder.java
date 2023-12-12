@@ -2,7 +2,8 @@ package com.roubao.config.token;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.roubao.config.thread.CommonThreadPoolHandler;
+import com.github.benmanes.caffeine.cache.Scheduler;
+import com.roubao.utils.MD5Util;
 import com.roubao.utils.SessionUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -27,15 +29,14 @@ public class TokenCacheHolder {
 
     public static final String TOKEN_HEADER_KEY = "Authorization";
 
+    public static boolean SUPER_ADMIN_ONLINE = false;
+
     private final Cache<Object, Object> tokenCache;
 
     private final TokenCacheProperties properties;
 
-    private final CommonThreadPoolHandler commonThreadPoolHandler;
-
-    public TokenCacheHolder(TokenCacheProperties properties, CommonThreadPoolHandler commonThreadPoolHandler) {
+    public TokenCacheHolder(TokenCacheProperties properties) {
         this.properties = properties;
-        this.commonThreadPoolHandler = commonThreadPoolHandler;
         log.info("初始化Token缓存池:{}", properties);
         // 初始化Token缓存池
         tokenCache = Caffeine.newBuilder()
@@ -47,7 +48,7 @@ public class TokenCacheHolder {
                 .maximumSize(properties.getMaximumSize())
                 // 移除时监听
                 .removalListener((k, v, c) -> log.info("Token缓存被移除，key:{}，value:{}", k, v))
-//                .scheduler(Scheduler.forScheduledExecutorService(threadPoolHandler))
+                .scheduler(Scheduler.systemScheduler())
                 // 淘汰策略
                 .evictionListener((k, v, c) -> log.info("Token缓存被淘汰，key:{}，value:{}", k, v))
                 .build();
@@ -136,5 +137,16 @@ public class TokenCacheHolder {
      */
     public void invalidate(String token) {
         tokenCache.invalidate(token);
+    }
+
+    /**
+     * 生成token并存入缓存
+     *
+     * @param userId 用户ID
+     */
+    public String generateTokenAndPutAtom(Integer userId) {
+        String token = MD5Util.encrypt(System.currentTimeMillis() + userId + new Random().nextInt() + "");
+        putAtom(token, userId);
+        return token;
     }
 }

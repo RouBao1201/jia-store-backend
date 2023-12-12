@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,8 +63,7 @@ public class UserServiceImpl implements UserService {
             throw new ParameterCheckException("用户名和密码不存在");
         }
         LoginRespDto loginRespDto = new LoginRespDto();
-        String token = MD5Util.encrypt(System.currentTimeMillis() + userPo.getId() + new Random().nextInt() + "");
-        tokenCacheHolder.putAtom(token, userPo.getId());
+        String token = tokenCacheHolder.generateTokenAndPutAtom(userPo.getId());
         loginRespDto.setToken(token);
         SessionUtil.setAttribute(USER_LOGIN_STATE, userPo.getId());
         return loginRespDto;

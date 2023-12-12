@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     public RespResult<Object> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
         ObjectError objectError = ex.getBindingResult().getAllErrors().get(0);
         log.error("GlobalExceptionHandler ==> MethodArgumentNotValidException: {}", objectError.getDefaultMessage());
-        return RespResult.error(HttpStatus.BAD_REQUEST.value(), "参数异常: " + objectError.getDefaultMessage());
+        return RespResult.error(HttpStatus.BAD_REQUEST.value(), objectError.getDefaultMessage());
     }
 
     /**
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public RespResult<Object> handleConstraintViolationException(ConstraintViolationException ex) {
-        return RespResult.error(HttpStatus.BAD_REQUEST.value(), "参数异常: " + ex.getMessage());
+        return RespResult.error(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
     /**
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthException.class)
     public RespResult<Object> authExceptionHandler(AuthException ex) {
         log.error("GlobalExceptionHandler ==> AuthExceptionError: {}", ex.getMessage(), ex);
-        return RespResult.error(HttpStatus.FORBIDDEN.value(), "无权访问: " + ex.getMessage());
+        return RespResult.error(HttpStatus.FORBIDDEN.value(), ex.getMessage());
     }
 
     /**
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ParameterCheckException.class)
     public RespResult<Object> parameterCheckExceptionHandler(ParameterCheckException ex) {
         log.error("GlobalExceptionHandler ==> ParameterCheckException: {}", ex.getMessage(), ex);
-        return RespResult.error(HttpStatus.BAD_REQUEST.value(), "参数异常: " + ex.getMessage());
+        return RespResult.error(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
     /**

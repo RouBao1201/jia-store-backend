@@ -64,8 +64,8 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
         try {
             return getApplicationContext().getBean(beanName);
         } catch (NoSuchBeanDefinitionException e) {
-            log.error("SpringContextHolder => The Bean is not found. [beanName:{}, ignoreNotFound:{}]. ErrorMessage:"
-                    + e.getMessage() + ". ", beanName, ignoreNotFound);
+//            log.error("SpringContextHolder => The Bean is not found. [beanName:{}, ignoreNotFound:{}]. ErrorMessage:"
+//                    + e.getMessage() + ". ", beanName, ignoreNotFound);
             if (ignoreNotFound) {
                 return null;
             }
@@ -96,10 +96,10 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
         try {
             return getApplicationContext().getBean(beanClass);
         } catch (NoSuchBeanDefinitionException e) {
-            log.error(
-                    "SpringContextHolder => SpringContextHolder => The Bean is not found. [beanClass:{}, ignoreNotFound:{}]. ErrorMessage:"
-                            + e.getMessage() + ". ",
-                    beanClass, ignoreNotFound);
+//            log.error(
+//                    "SpringContextHolder => The Bean is not found. [beanClass:{}, ignoreNotFound:{}]. ErrorMessage:"
+//                            + e.getMessage() + ". ",
+//                    beanClass, ignoreNotFound);
             if (ignoreNotFound) {
                 return null;
 
@@ -133,8 +133,8 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
         try {
             return getApplicationContext().getBean(beanClass);
         } catch (NoSuchBeanDefinitionException e) {
-            log.error("SpringContextHolder => The Bean is not found. [beanName:{}, beanClass:{}, ignoreNotFound:"
-                    + ignoreNotFound + "]. ErrorMessage:" + e.getMessage() + ". ", beanName, beanClass);
+//            log.error("SpringContextHolder => The Bean is not found. [beanName:{}, beanClass:{}, ignoreNotFound:"
+//                    + ignoreNotFound + "]. ErrorMessage:" + e.getMessage() + ". ", beanName, beanClass);
             if (ignoreNotFound) {
                 return null;
             }
