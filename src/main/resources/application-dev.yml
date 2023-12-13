@@ -45,4 +45,4 @@ logging:
   config: classpath:logback-config.xml
 token:
   cache:
-    expire-after-access: 10
+    expire-after-access: 100000

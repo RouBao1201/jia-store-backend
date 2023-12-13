@@ -28,4 +28,13 @@ public class UserInfoDto implements Serializable {
 
     @Schema(name = "superAdmin", description = "用户是否为超级管理员")
     private boolean superAdmin;
+
+    @Schema(name = "nickname", description = "用户昵称")
+    private String nickname;
+
+    @Schema(name = "avatar", description = "用户头像")
+    private String avatar;
+
+    @Schema(name = "gender", description = "用户性别")
+    private Integer gender;
 }

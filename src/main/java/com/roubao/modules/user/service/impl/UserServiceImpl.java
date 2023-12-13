@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TokenCacheHolder tokenCacheHolder;
 
+
     @Override
     public LoginRespDto login(LoginReqDto reqDto) {
         LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
@@ -91,18 +92,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer revise(ReviseReqDto reqDto) {
-        LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
-        userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
-        UserPO user = userMapper.selectOne(userQueryWrapper);
-        if (user == null) {
-            throw new ParameterCheckException("用户名不存在");
+        if (ReviseReqDto.TYPE_SMS.equals(reqDto.getType())) {
+            LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
+            userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
+            UserPO user = userMapper.selectOne(userQueryWrapper);
+            if (user == null) {
+                throw new ParameterCheckException("用户名不存在");
+            }
+            LambdaUpdateWrapper<UserPO> userUpdateWrapper = new LambdaUpdateWrapper<>();
+            userUpdateWrapper.set(UserPO::getUserName, reqDto.getUsername());
+            UserPO userPo = new UserPO();
+            userPo.setPassword(MD5Util.encrypt(reqDto.getPassword()));
+            userPo.setUpdateTime(new Date());
+            return userMapper.update(userPo, userUpdateWrapper);
+        } else if (ReviseReqDto.TYPE_OLD_PASSWORD.equals(reqDto.getType())) {
+            // TODO
         }
-        LambdaUpdateWrapper<UserPO> userUpdateWrapper = new LambdaUpdateWrapper<>();
-        userUpdateWrapper.set(UserPO::getUserName, reqDto.getUsername());
-        UserPO userPo = new UserPO();
-        userPo.setPassword(MD5Util.encrypt(reqDto.getPassword()));
-        userPo.setUpdateTime(new Date());
-        return userMapper.update(userPo, userUpdateWrapper);
+        throw new ParameterCheckException("修改密码类型错误");
     }
 
     @Override

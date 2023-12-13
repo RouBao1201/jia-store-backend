@@ -4,8 +4,8 @@ create table user
 (
     id          int auto_increment comment '主键ID'
         primary key,
-    username    varchar(200)            not null comment '用户名',
-    password    varchar(200)            not null comment '密码',
+    username    varchar(200)           not null comment '用户名',
+    password    varchar(200)           not null comment '密码',
     status      tinyint                not null comment '状态：0-失效；1-生效',
     create_time datetime default now() not null comment '创建时间',
     update_time datetime default now() not null comment '修改时间',
@@ -14,6 +14,17 @@ create table user
 ) comment '用户表';
 
 
+drop table if exists user_info;
+create table user_info
+(
+    user_id     int comment '主键ID'
+        primary key,
+    nickname    varchar(30)            not null comment '用户昵称',
+    avatar      varchar(500)           not null comment '密码',
+    gender      tinyint                not null comment '用户性别：0-女；1-男',
+    create_time datetime default now() not null comment '创建时间',
+    update_time datetime default now() not null comment '修改时间'
+) comment '用户信息表';
 
 
 drop table if exists role;

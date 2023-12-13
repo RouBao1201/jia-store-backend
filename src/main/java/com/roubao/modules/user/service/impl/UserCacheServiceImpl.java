@@ -4,11 +4,13 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import com.roubao.domian.AuthorityPO;
 import com.roubao.domian.RolePO;
+import com.roubao.domian.UserInfoPO;
 import com.roubao.domian.UserPO;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.UserAuthorityDto;
 import com.roubao.modules.user.dto.UserInfoDto;
 import com.roubao.modules.user.dto.UserRoleDto;
+import com.roubao.modules.user.mapper.UserInfoMapper;
 import com.roubao.modules.user.mapper.UserMapper;
 import com.roubao.modules.user.service.UserCacheService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,10 @@ public class UserCacheServiceImpl implements UserCacheService {
     @Autowired
     private UserMapper userMapper;
 
+
+    @Autowired
+    private UserInfoMapper userInfoMapper;
+
     @Override
     @Cacheable(key = "'" + CURRENT_USER_CACHE_PREFIX + "'" + "+ #userId", unless = "#result == null")
     public CurrentUserDto getUserById(Integer userId) {
@@ -51,6 +57,12 @@ public class UserCacheServiceImpl implements UserCacheService {
         userInfoDto.setStatus(user.getStatus());
         userInfoDto.setUsername(user.getUserName());
         userInfoDto.setSuperAdmin(userMapper.isSuperAdmin(userId) != null);
+        UserInfoPO userInfo = userInfoMapper.selectById(userId);
+        if (userInfo != null) {
+            userInfoDto.setGender(userInfo.getGender());
+            userInfoDto.setAvatar(userInfo.getAvatar());
+            userInfoDto.setNickname(userInfo.getNickname());
+        }
         currentUserDto.setUserInfo(userInfoDto);
 
         // 用户权限
