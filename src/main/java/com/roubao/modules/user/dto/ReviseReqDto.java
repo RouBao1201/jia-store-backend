@@ -2,7 +2,6 @@ package com.roubao.modules.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.ToString;
 
@@ -10,18 +9,19 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 用户注册请求实体
+ * 用户修改密码请求实体
  *
  * @author SongYanBin
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/12/10
  **/
-@Schema(name = "用户注册请求实体", description = "用户注册请求实体")
+@Schema(name = "用户修改密码请求实体", description = "用户修改密码请求实体")
 @Data
 @ToString
-public class RegisterReqDto implements Serializable {
+public class ReviseReqDto implements Serializable {
+
     @Serial
-    private static final long serialVersionUID = -9118776122854492640L;
+    private static final long serialVersionUID = 7573677603499973999L;
 
     @Schema(name = "username", description = "用户名", example = "admin")
     @NotBlank(message = "用户名不可为空")

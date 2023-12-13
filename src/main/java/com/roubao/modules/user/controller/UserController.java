@@ -5,6 +5,9 @@ import com.roubao.config.auth.DisableToken;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
 import com.roubao.modules.user.dto.RegisterReqDto;
+import com.roubao.modules.user.dto.RegisterRespDto;
+import com.roubao.modules.user.dto.ReviseReqDto;
+import com.roubao.modules.user.dto.ReviseRespDto;
 import com.roubao.modules.user.service.UserService;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,8 +47,19 @@ public class UserController {
     @Operation(summary = "用户注册", description = "用户注册")
     @DisableToken
     @PostMapping("/register")
-    public RespResult<Integer> register(@Validated @RequestBody RegisterReqDto reqDto) {
-        return RespResult.success("注册成功", userService.register(reqDto));
+    public RespResult<RegisterRespDto> register(@Validated @RequestBody RegisterReqDto reqDto) {
+        RegisterRespDto registerRespDto = new RegisterRespDto();
+        registerRespDto.setStatus(RegisterRespDto.transStatus(userService.register(reqDto)));
+        return RespResult.success("注册成功", registerRespDto);
+    }
+
+    @Operation(summary = "用户修改密码", description = "用户修改密码")
+    @DisableToken
+    @PostMapping("/revise")
+    public RespResult<ReviseRespDto> revise(@Validated @RequestBody ReviseReqDto reqDto) {
+        ReviseRespDto reviseRespDto = new ReviseRespDto();
+        reviseRespDto.setStatus(ReviseRespDto.transStatus(userService.revise(reqDto)));
+        return RespResult.success("注册成功", reviseRespDto);
     }
 
     @Operation(summary = "用户注销", description = "用户注销")

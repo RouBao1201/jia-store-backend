@@ -2,6 +2,7 @@ package com.roubao.modules.user.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.roubao.config.exception.AuthException;
 import com.roubao.config.exception.ParameterCheckException;
 import com.roubao.config.token.TokenCacheHolder;
@@ -11,6 +12,7 @@ import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
 import com.roubao.modules.user.dto.RegisterReqDto;
+import com.roubao.modules.user.dto.ReviseReqDto;
 import com.roubao.modules.user.mapper.UserMapper;
 import com.roubao.modules.user.service.UserCacheService;
 import com.roubao.modules.user.service.UserService;
@@ -60,7 +62,7 @@ public class UserServiceImpl implements UserService {
         userQueryWrapper.eq(UserPO::getStatus, 1);
         UserPO userPo = userMapper.selectOne(userQueryWrapper);
         if (userPo == null) {
-            throw new ParameterCheckException("用户名和密码不存在");
+            throw new ParameterCheckException("用户名或密码错误");
         }
         LoginRespDto loginRespDto = new LoginRespDto();
         String token = tokenCacheHolder.generateTokenAndPutAtom(userPo.getId());
@@ -85,6 +87,22 @@ public class UserServiceImpl implements UserService {
         userPo.setCreateTime(new Date());
         userPo.setUpdateTime(new Date());
         return userMapper.insert(userPo);
+    }
+
+    @Override
+    public Integer revise(ReviseReqDto reqDto) {
+        LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
+        userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
+        UserPO user = userMapper.selectOne(userQueryWrapper);
+        if (user == null) {
+            throw new ParameterCheckException("用户名不存在");
+        }
+        LambdaUpdateWrapper<UserPO> userUpdateWrapper = new LambdaUpdateWrapper<>();
+        userUpdateWrapper.set(UserPO::getUserName, reqDto.getUsername());
+        UserPO userPo = new UserPO();
+        userPo.setPassword(MD5Util.encrypt(reqDto.getPassword()));
+        userPo.setUpdateTime(new Date());
+        return userMapper.update(userPo, userUpdateWrapper);
     }
 
     @Override

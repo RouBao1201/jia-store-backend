@@ -5,6 +5,7 @@ import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
 import com.roubao.modules.user.dto.RegisterReqDto;
+import com.roubao.modules.user.dto.ReviseReqDto;
 
 import java.util.Map;
 
@@ -34,9 +35,16 @@ public interface UserService {
     Integer register(RegisterReqDto reqDto);
 
     /**
+     * 用户修改密码
+     *
+     * @param reqDto 修改请求体
+     * @return 是否修改成功
+     */
+    Integer revise(ReviseReqDto reqDto);
+
+    /**
      * 用户注销
      *
-     * @param userId 用户ID
      * @return 注销是否成功
      */
     void logout();
