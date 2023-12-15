@@ -3,6 +3,7 @@ package com.roubao.modules.user.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.roubao.config.exception.AuthException;
@@ -123,20 +124,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void smsRevise(ReviseReqDto reqDto) {
-        // todo 验证短信验证码是否正确（当前写死666）
-        if (!"666".equals(reqDto.getSmsCode())) {
-            throw new ParameterCheckException("验证码不正确！");
-        }
+    public void revisePassword(ReviseReqDto reqDto) {
         if (!Objects.equals(reqDto.getNewPassword(), reqDto.getCheckPassword())) {
             throw new ParameterCheckException("两次密码不一致！");
         }
         LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
+        if (ReviseReqDto.TYPE_OLD_PASSWORD.equals(reqDto.getType())) {
+            if (StrUtil.isBlank(reqDto.getOldPassword())) {
+                throw new ParameterCheckException("旧密码不可为空！");
+            }
+            userQueryWrapper.eq(UserPO::getPassword, MD5Util.encrypt(reqDto.getOldPassword()));
+        } else {
+            // todo 验证短信验证码是否正确（当前写死666）
+            if (!"666".equals(reqDto.getSmsCode())) {
+                throw new ParameterCheckException("验证码不正确！");
+            }
+        }
         userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
         UserPO user = userMapper.selectOne(userQueryWrapper);
         if (user == null) {
-            throw new ParameterCheckException("用户名不存在！");
+            throw new ParameterCheckException("用户名或密码错误！");
         }
+
+        // 修改密码
         LambdaUpdateWrapper<UserPO> userUpdateWrapper = new LambdaUpdateWrapper<>();
         userUpdateWrapper.eq(UserPO::getUserName, reqDto.getUsername());
         UserPO userPo = new UserPO();

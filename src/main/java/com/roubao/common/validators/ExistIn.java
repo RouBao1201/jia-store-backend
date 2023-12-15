@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-@Constraint(validatedBy = ExistInValidatorForInteger.class)
+@Constraint(validatedBy = {ExistInValidatorForInteger.class, ExistInValidatorForString.class})
 public @interface ExistIn {
 
     String message() default "Parameter not in optional range";
@@ -29,4 +29,6 @@ public @interface ExistIn {
     Class<? extends Payload>[] payload() default {};
 
     int[] intRange() default {};
+
+    String[] strRange() default {};
 }

@@ -1,5 +1,6 @@
 package com.roubao.modules.user.dto;
 
+import com.roubao.common.validators.ExistIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -21,9 +22,15 @@ public class ReviseReqDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1935922855720594869L;
 
+    public static final String TYPE_OLD_PASSWORD = "old_password";
+    public static final String TYPE_SMS_CODE = "sms_code";
+
     @Schema(name = "username", description = "用户名", example = "admin")
     @NotBlank(message = "用户名不可为空")
     private String username;
+
+    @Schema(name = "oldPassword", description = "旧密码", example = "admin")
+    private String oldPassword;
 
     @Schema(name = "newPassword", description = "新密码", example = "admin")
     @NotBlank(message = "新密码不可为空")
@@ -34,6 +41,9 @@ public class ReviseReqDto implements Serializable {
     private String checkPassword;
 
     @Schema(name = "smsCode", description = "短信验证码", example = "123456")
-    @NotBlank(message = "短信验证码不可为空")
     private String smsCode;
+
+    @Schema(name = "type", description = "类型", example = "old_password/sms_code")
+    @ExistIn(strRange = {"old_password", "sms_code"}, message = "类型不在可选范围内")
+    private String type;
 }

@@ -52,11 +52,11 @@ public class UserController {
         return RespResult.success("注册成功");
     }
 
-    @Operation(summary = "用户修改密码（短信验证码）", description = "用户修改密码（短信验证码）")
+    @Operation(summary = "用户修改密码", description = "用户修改密码")
     @DisableToken
-    @PostMapping("/smsRevise")
-    public RespResult<Object> smsRevise(@Validated @RequestBody ReviseReqDto reqDto) {
-        userService.smsRevise(reqDto);
+    @PostMapping("/revisePassword")
+    public RespResult<Object> revisePassword(@Validated @RequestBody ReviseReqDto reqDto) {
+        userService.revisePassword(reqDto);
         return RespResult.success("修改成功");
     }
 

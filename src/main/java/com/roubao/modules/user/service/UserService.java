@@ -40,7 +40,7 @@ public interface UserService {
      *
      * @param reqDto 修改请求体
      */
-    void smsRevise(ReviseReqDto reqDto);
+    void revisePassword(ReviseReqDto reqDto);
 
     /**
      * 个人信息设置
