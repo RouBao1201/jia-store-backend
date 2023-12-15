@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.roubao.domian.AuthorityPO;
 import com.roubao.domian.RolePO;
 import com.roubao.domian.UserPO;
+import com.roubao.modules.user.dto.UserInfoDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 用户持久层

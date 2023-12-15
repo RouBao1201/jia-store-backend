@@ -37,4 +37,7 @@ public class UserInfoDto implements Serializable {
 
     @Schema(name = "gender", description = "用户性别")
     private Integer gender;
+
+    @Schema(name = "电话号码", description = "电话号码")
+    private String phone;
 }

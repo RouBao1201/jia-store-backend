@@ -1,4 +1,4 @@
-package com.roubao.modules.user.dto;
+package com.roubao.common.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -8,22 +8,21 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 用户修改密码响应实体
+ * 状态响应实体
  *
  * @author: SongYanBin
- * @date: 2023-12-13
+ * @date: 2023-12-14
  */
-@Schema(name = "用户修改密码响应实体", description = "用户修改密码响应实体")
+@Schema(name = "状态响应实体", description = "状态响应实体")
 @Data
 @ToString
-public class ReviseRespDto implements Serializable {
-
+public class StatusResp implements Serializable {
     @Serial
-    private static final long serialVersionUID = -7611661317546692788L;
+    private static final long serialVersionUID = -7416246428022268408L;
 
     /**
-     * success:注册成功
-     * error:注册失败
+     * success:成功
+     * error:失败
      */
     @Schema(name = "status", description = "修改状态", example = "success")
     private String status;

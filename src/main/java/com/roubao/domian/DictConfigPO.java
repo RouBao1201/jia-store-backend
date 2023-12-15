@@ -11,41 +11,36 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户信息表
+ * 字典表
  *
  * @author: SongYanBin
- * @date: 2023-12-13
+ * @date: 2023-12-14
  */
 @Data
 @ToString
-@TableName(value = "user_info")
-public class UserInfoPO implements Serializable {
+@TableName(value = "dict_config")
+public class DictConfigPO implements Serializable {
     @Serial
-    private static final long serialVersionUID = -8662216618893386932L;
+    private static final long serialVersionUID = 4242699905342207660L;
 
-    @TableId(value = "user_id")
-    @TableField("user_id")
-    private Integer userId;
     /**
-     * 用户昵称
+     * 字典KEY
      */
-    @TableField("nickname")
-    private String nickname;
+    @TableField("dict_key")
+    private String dictKey;
+
     /**
-     * 用户头像
+     * 标签
      */
-    @TableField("avatar")
-    private String avatar;
+    @TableField("label")
+    private String label;
+
     /**
-     * 性别
+     * 值
      */
-    @TableField("gender")
-    private Integer gender;
-    /**
-     * 电话号码
-     */
-    @TableField("phone")
-    private String phone;
+    @TableField("value")
+    private String value;
+
     /**
      * 创建时间
      */

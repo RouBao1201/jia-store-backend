@@ -2,14 +2,14 @@ package com.roubao.modules.user.controller;
 
 import com.roubao.common.response.RespResult;
 import com.roubao.config.auth.DisableToken;
+import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
+import com.roubao.modules.user.dto.PersonalSettingsReqDto;
 import com.roubao.modules.user.dto.RegisterReqDto;
-import com.roubao.modules.user.dto.RegisterRespDto;
 import com.roubao.modules.user.dto.ReviseReqDto;
-import com.roubao.modules.user.dto.ReviseRespDto;
+import com.roubao.modules.user.dto.SmsCodeSendReqDto;
 import com.roubao.modules.user.service.UserService;
-import com.roubao.modules.user.dto.CurrentUserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,19 +47,25 @@ public class UserController {
     @Operation(summary = "用户注册", description = "用户注册")
     @DisableToken
     @PostMapping("/register")
-    public RespResult<RegisterRespDto> register(@Validated @RequestBody RegisterReqDto reqDto) {
-        RegisterRespDto registerRespDto = new RegisterRespDto();
-        registerRespDto.setStatus(RegisterRespDto.transStatus(userService.register(reqDto)));
-        return RespResult.success("注册成功", registerRespDto);
+    public RespResult<Object> register(@Validated @RequestBody RegisterReqDto reqDto) {
+        userService.register(reqDto);
+        return RespResult.success("注册成功");
     }
 
-    @Operation(summary = "用户修改密码", description = "用户修改密码")
+    @Operation(summary = "用户修改密码（短信验证码）", description = "用户修改密码（短信验证码）")
     @DisableToken
-    @PostMapping("/revise")
-    public RespResult<ReviseRespDto> revise(@Validated @RequestBody ReviseReqDto reqDto) {
-        ReviseRespDto reviseRespDto = new ReviseRespDto();
-        reviseRespDto.setStatus(ReviseRespDto.transStatus(userService.revise(reqDto)));
-        return RespResult.success("注册成功", reviseRespDto);
+    @PostMapping("/smsRevise")
+    public RespResult<Object> smsRevise(@Validated @RequestBody ReviseReqDto reqDto) {
+        userService.smsRevise(reqDto);
+        return RespResult.success("修改成功");
+    }
+
+    @Operation(summary = "个人信息设置", description = "个人信息设置")
+    @DisableToken
+    @PostMapping("/personalSettings")
+    public RespResult<Object> personalSettings(@Validated @RequestBody PersonalSettingsReqDto reqDto) {
+        userService.personalSettings(reqDto);
+        return RespResult.success("修改成功");
     }
 
     @Operation(summary = "用户注销", description = "用户注销")
@@ -67,6 +73,14 @@ public class UserController {
     public RespResult<Object> logout() {
         userService.logout();
         return RespResult.success("注销成功");
+    }
+
+    @Operation(summary = "发送验证码", description = "发送验证码")
+    @DisableToken
+    @PostMapping("/sendSmsCode")
+    public RespResult<Object> sendSmsCode(@Validated @RequestBody SmsCodeSendReqDto reqDto) {
+        userService.sendSmsCode(reqDto);
+        return RespResult.success("验证码发送成功");
     }
 
     @Operation(summary = "获取当前用户", description = "获取当前用户")

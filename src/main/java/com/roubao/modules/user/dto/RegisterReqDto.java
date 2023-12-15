@@ -37,6 +37,10 @@ public class RegisterReqDto implements Serializable {
 //    @Size(min = 8, message = "密码长度不能小于8位")
     private String checkPassword;
 
+    @Schema(name = "phone", description = "电话号码", example = "admin")
+    @NotBlank(message = "电话号码不可为空")
+    private String phone;
+
 //    @Schema(name = "type", description = "类型", example = "1")
 //    private Integer type;
 }

@@ -1,18 +1,24 @@
 package com.roubao.modules.user.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.roubao.config.exception.AuthException;
 import com.roubao.config.exception.ParameterCheckException;
 import com.roubao.config.token.TokenCacheHolder;
 import com.roubao.domian.AuthorityPO;
+import com.roubao.domian.UserInfoPO;
 import com.roubao.domian.UserPO;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
+import com.roubao.modules.user.dto.PersonalSettingsReqDto;
 import com.roubao.modules.user.dto.RegisterReqDto;
 import com.roubao.modules.user.dto.ReviseReqDto;
+import com.roubao.modules.user.dto.SmsCodeSendReqDto;
+import com.roubao.modules.user.mapper.UserInfoMapper;
 import com.roubao.modules.user.mapper.UserMapper;
 import com.roubao.modules.user.service.UserCacheService;
 import com.roubao.modules.user.service.UserService;
@@ -54,6 +60,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TokenCacheHolder tokenCacheHolder;
 
+    @Autowired
+    private UserInfoMapper userInfoMapper;
+
 
     @Override
     public LoginRespDto login(LoginReqDto reqDto) {
@@ -63,7 +72,7 @@ public class UserServiceImpl implements UserService {
         userQueryWrapper.eq(UserPO::getStatus, 1);
         UserPO userPo = userMapper.selectOne(userQueryWrapper);
         if (userPo == null) {
-            throw new ParameterCheckException("用户名或密码错误");
+            throw new ParameterCheckException("用户名或密码错误！");
         }
         LoginRespDto loginRespDto = new LoginRespDto();
         String token = tokenCacheHolder.generateTokenAndPutAtom(userPo.getId());
@@ -74,41 +83,93 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer register(RegisterReqDto reqDto) {
+    public void register(RegisterReqDto reqDto) {
+        // 校验账号是否重复
         LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
         userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
-        UserPO user = userMapper.selectOne(userQueryWrapper);
-        if (user != null) {
-            throw new ParameterCheckException("用户名已存在");
+        UserPO userRes = userMapper.selectOne(userQueryWrapper);
+        if (userRes != null) {
+            throw new ParameterCheckException("用户名已存在！");
         }
+
+        // 校验手机号码是否重复
+        LambdaQueryWrapper<UserInfoPO> userInfoQueryWrapper = new LambdaQueryWrapper<>();
+        userInfoQueryWrapper.eq(UserInfoPO::getPhone, reqDto.getPhone());
+        UserInfoPO userInfoRes = userInfoMapper.selectOne(userInfoQueryWrapper);
+        if (userInfoRes != null) {
+            throw new ParameterCheckException("该号码已存在注册账户！");
+        }
+
+        // 新增用户
         UserPO userPo = new UserPO();
         userPo.setUserName(reqDto.getUsername());
         userPo.setPassword(MD5Util.encrypt(reqDto.getPassword()));
         userPo.setStatus(UserPO.STATUS_ENABLED);
         userPo.setCreateTime(new Date());
         userPo.setUpdateTime(new Date());
-        return userMapper.insert(userPo);
+        userMapper.insert(userPo);
+
+        // 新增用户信息（默认数据）
+        UserInfoPO userInfo = new UserInfoPO();
+        userInfo.setUserId(userPo.getId());
+        userInfo.setNickname(userPo.getId() + ":" + RandomUtil.randomString(10));
+        userInfo.setGender(1);
+        userInfo.setAvatar("");
+        userInfo.setPhone(reqDto.getPhone());
+        userInfo.setUpdateTime(new Date());
+        userInfo.setCreateTime(new Date());
+        userInfoMapper.insert(userInfo);
     }
 
     @Override
-    public Integer revise(ReviseReqDto reqDto) {
-        if (ReviseReqDto.TYPE_SMS.equals(reqDto.getType())) {
-            LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
-            userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
-            UserPO user = userMapper.selectOne(userQueryWrapper);
-            if (user == null) {
-                throw new ParameterCheckException("用户名不存在");
-            }
-            LambdaUpdateWrapper<UserPO> userUpdateWrapper = new LambdaUpdateWrapper<>();
-            userUpdateWrapper.set(UserPO::getUserName, reqDto.getUsername());
-            UserPO userPo = new UserPO();
-            userPo.setPassword(MD5Util.encrypt(reqDto.getPassword()));
-            userPo.setUpdateTime(new Date());
-            return userMapper.update(userPo, userUpdateWrapper);
-        } else if (ReviseReqDto.TYPE_OLD_PASSWORD.equals(reqDto.getType())) {
-            // TODO
+    @Transactional(rollbackFor = Exception.class)
+    public void smsRevise(ReviseReqDto reqDto) {
+        // todo 验证短信验证码是否正确（当前写死666）
+        if (!"666".equals(reqDto.getSmsCode())) {
+            throw new ParameterCheckException("验证码不正确！");
         }
-        throw new ParameterCheckException("修改密码类型错误");
+        if (!Objects.equals(reqDto.getNewPassword(), reqDto.getCheckPassword())) {
+            throw new ParameterCheckException("两次密码不一致！");
+        }
+        LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
+        userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
+        UserPO user = userMapper.selectOne(userQueryWrapper);
+        if (user == null) {
+            throw new ParameterCheckException("用户名不存在！");
+        }
+        LambdaUpdateWrapper<UserPO> userUpdateWrapper = new LambdaUpdateWrapper<>();
+        userUpdateWrapper.eq(UserPO::getUserName, reqDto.getUsername());
+        UserPO userPo = new UserPO();
+        userPo.setPassword(MD5Util.encrypt(reqDto.getNewPassword()));
+        userPo.setUpdateTime(new Date());
+        userMapper.update(userPo, userUpdateWrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void personalSettings(PersonalSettingsReqDto reqDto) {
+        LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
+        userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
+        UserPO user = userMapper.selectOne(userQueryWrapper);
+        if (user == null) {
+            throw new ParameterCheckException("用户名不存在！");
+        }
+        // 校验修改的是否为当前登陆人自己的信息
+        boolean currentLoginUser = isCurrentLoginUser(user.getId());
+        if (!currentLoginUser) {
+            throw new ParameterCheckException("不允许修改他人用户信息");
+        }
+
+        // 修改用户信息
+        LambdaUpdateWrapper<UserInfoPO> userInfoUpdateWrapper = new LambdaUpdateWrapper<>();
+        userInfoUpdateWrapper.eq(UserInfoPO::getUserId, user.getId());
+        UserInfoPO userInfo = new UserInfoPO();
+        userInfo.setNickname(reqDto.getNickname());
+        userInfo.setGender(reqDto.getGender());
+        userInfo.setUpdateTime(new Date());
+        userInfoMapper.update(userInfo, userInfoUpdateWrapper);
+        // 清理用户缓存信息
+        userCacheService.invalidateUserCache(user.getId());
     }
 
     @Override
@@ -122,11 +183,11 @@ public class UserServiceImpl implements UserService {
     public CurrentUserDto getCurrentUser() {
         Integer currentUserId = tokenCacheHolder.getCurrentUserId();
         if (currentUserId == null) {
-            throw new AuthException("用户登录状态已失效");
+            throw new AuthException("用户登录状态已失效！");
         }
-        CurrentUserDto user = userCacheService.getUserById(Integer.valueOf(currentUserId));
+        CurrentUserDto user = userCacheService.getUserById(currentUserId);
         if (user == null) {
-            throw new AuthException("用户不存在");
+            throw new AuthException("用户不存在！");
         }
         return user;
     }
@@ -138,11 +199,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void sendSmsCode(SmsCodeSendReqDto reqDto) {
+        // TODO 发送验证码
+    }
+
+    @Override
     public Map<String, AuthorityPO> getUserAuthority(Integer userId) {
         List<AuthorityPO> authorityList = userMapper.queryUserAuthority(userId);
         if (CollectionUtil.isNotEmpty(authorityList)) {
             return authorityList.stream().collect(Collectors.toMap(AuthorityPO::getAuthKey, Function.identity()));
         }
         return new HashMap<>();
+    }
+
+    @Override
+    public boolean isCurrentLoginUser(Integer userId) {
+        return ObjUtil.equals(tokenCacheHolder.getCurrentUserId(), userId);
     }
 }
