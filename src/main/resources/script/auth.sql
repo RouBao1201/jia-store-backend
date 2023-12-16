@@ -22,14 +22,14 @@ create table user_info
     nickname    varchar(30)            not null comment '用户昵称',
     avatar      varchar(500)           not null comment '用户头像',
     gender      tinyint                not null comment '用户性别：0-女；1-男',
-    phone       varchar(20)            not null comment '用户电话号码',
+    email       varchar(20)            not null comment '用户邮箱',
     create_time datetime default now() not null comment '创建时间',
     update_time datetime default now() not null comment '修改时间'
 ) comment '用户信息表';
 INSERT INTO jiastore.user_info (user_id, nickname, avatar, gender, phone, create_time, update_time)
 VALUES (1, '管理员',
         'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2F4d40b566-1f0a-4f8d-bc97-c513df8775b3%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1705040920&t=51a54bcb01c5fb4f3974ecb714e7f0bb',
-        1, '13202081603', '2023-12-13 14:29:24', '2023-12-13 14:29:24');
+        1, '624142800@qq.com', '2023-12-13 14:29:24', '2023-12-13 14:29:24');
 
 
 drop table if exists role;
@@ -92,9 +92,10 @@ create table role_authority
 drop table if exists dict_config;
 create table dict_config
 (
-    dict_key    varchar(25) comment '字典KEY',
-    label       varchar(25)            not null comment '字典标签',
-    value       varchar(50)            not null comment '字典标签值',
-    create_time datetime default now() not null comment '创建时间',
-    update_time datetime default now() not null comment '修改时间'
+    dict_key    varchar(25)                        not null comment '字典KEY',
+    label       varchar(25)                        not null comment '字典标签',
+    value       varchar(50)                        not null comment '字典标签值',
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time datetime default CURRENT_TIMESTAMP not null comment '修改时间',
+    unique (dict_key, label, value)
 ) comment '字典配置表';

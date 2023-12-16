@@ -1,4 +1,4 @@
-package com.roubao.config.token;
+package com.roubao.config.cache.token;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -31,7 +31,7 @@ public class TokenCacheHolder {
 
     public static boolean SUPER_ADMIN_ONLINE = false;
 
-    private final Cache<Object, Object> tokenCache;
+    private final Cache<String, Integer> tokenCache;
 
     private final TokenCacheProperties properties;
 
@@ -59,7 +59,7 @@ public class TokenCacheHolder {
      *
      * @return Cache
      */
-    public Cache<Object, Object> getTokenCache() {
+    public Cache<String, Integer> getTokenCache() {
         return tokenCache;
     }
 
@@ -116,7 +116,14 @@ public class TokenCacheHolder {
         return getUserId(token);
     }
 
-    public Object get(String token, Function<Object, Object> function) {
+    /**
+     * 根据Token获取用户ID（线程安全，会等待其他调用get方法的线程执行）
+     *
+     * @param token    token令牌
+     * @param function 方法
+     * @return 用户ID
+     */
+    public Integer get(String token, Function<String, Integer> function) {
         return tokenCache.get(token, function);
     }
 
@@ -124,9 +131,9 @@ public class TokenCacheHolder {
      * 获取缓存数据（不存在则直接返回null,不会造成线程阻塞）
      *
      * @param token token
-     * @return Object
+     * @return 用户ID
      */
-    public Object getIfPresent(String token) {
+    public Integer getIfPresent(String token) {
         return tokenCache.getIfPresent(token);
     }
 

@@ -24,4 +24,7 @@ public class SmsCodeSendReqDto implements Serializable {
     @Schema(name = "username", description = "用户名", example = "admin")
     @NotNull(message = "用户名不能为空")
     private String username;
+
+    @Schema(name = "email", description = "邮箱", example = "62414****@qq.com")
+    private String email;
 }

@@ -2,7 +2,6 @@ package com.roubao.modules.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.ToString;
 
@@ -37,9 +36,13 @@ public class RegisterReqDto implements Serializable {
 //    @Size(min = 8, message = "密码长度不能小于8位")
     private String checkPassword;
 
-    @Schema(name = "phone", description = "电话号码", example = "admin")
-    @NotBlank(message = "电话号码不可为空")
-    private String phone;
+    @Schema(name = "email", description = "邮箱", example = "62414****@qq.com")
+    @NotBlank(message = "邮箱不可为空")
+    private String email;
+
+    @Schema(name = "smsCode", description = "验证码", example = "123456")
+    @NotBlank(message = "邮箱不可为空")
+    private String smsCode;
 
 //    @Schema(name = "type", description = "类型", example = "1")
 //    private Integer type;

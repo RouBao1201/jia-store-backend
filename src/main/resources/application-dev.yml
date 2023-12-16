@@ -5,7 +5,7 @@ spring:
     druid:
       username: root
       password: root
-      url: jdbc:mysql://localhost:3306/jiastore?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+      url: jdbc:mysql://localhost:3306/jia-store?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
       driver-class-name: com.mysql.cj.jdbc.Driver
       initial-size: 10
       max-active: 50
@@ -14,6 +14,19 @@ spring:
       query-timeout: 100
       transaction-query-timeout: 100
       phy-timeout-millis: 10000
+  mail:
+    host: smtp.qq.com
+    username: '624142800@qq.com'
+    password: 'htdkvkfosxsgbbhi'
+    default-encoding: 'UTF-8'
+    protocol: 'smtp'
+    properties:
+      mail:
+        smtp:
+          auth: true # 启用SMTP认证
+          starttls:
+            enabled: true # 启用SMTP认证
+            required: true # 必须采用加密链接
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
@@ -43,6 +56,10 @@ logging:
     root: warn
     com.roubao: info
   config: classpath:logback-config.xml
-token:
-  cache:
+cache:
+  token:
     expire-after-access: 100000
+  sms:
+    expire-after-write: 60
+
+

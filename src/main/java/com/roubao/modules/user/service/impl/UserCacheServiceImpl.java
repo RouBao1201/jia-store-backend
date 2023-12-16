@@ -62,6 +62,7 @@ public class UserCacheServiceImpl implements UserCacheService {
             userInfoDto.setGender(userInfo.getGender());
             userInfoDto.setAvatar(userInfo.getAvatar());
             userInfoDto.setNickname(userInfo.getNickname());
+            userInfoDto.setEmail(userInfo.getEmail());
         }
         currentUserDto.setUserInfo(userInfoDto);
 

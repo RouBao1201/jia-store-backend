@@ -6,12 +6,14 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.roubao.config.cache.sms.SmsCodeHolder;
+import com.roubao.config.cache.token.TokenCacheHolder;
 import com.roubao.config.exception.AuthException;
 import com.roubao.config.exception.ParameterCheckException;
-import com.roubao.config.token.TokenCacheHolder;
 import com.roubao.domian.AuthorityPO;
 import com.roubao.domian.UserInfoPO;
 import com.roubao.domian.UserPO;
+import com.roubao.helper.EmailHelper;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
@@ -19,6 +21,7 @@ import com.roubao.modules.user.dto.PersonalSettingsReqDto;
 import com.roubao.modules.user.dto.RegisterReqDto;
 import com.roubao.modules.user.dto.ReviseReqDto;
 import com.roubao.modules.user.dto.SmsCodeSendReqDto;
+import com.roubao.modules.user.dto.UserInfoDto;
 import com.roubao.modules.user.mapper.UserInfoMapper;
 import com.roubao.modules.user.mapper.UserMapper;
 import com.roubao.modules.user.service.UserCacheService;
@@ -62,6 +65,9 @@ public class UserServiceImpl implements UserService {
     private TokenCacheHolder tokenCacheHolder;
 
     @Autowired
+    private SmsCodeHolder smsCodeHolder;
+
+    @Autowired
     private UserInfoMapper userInfoMapper;
 
 
@@ -93,12 +99,12 @@ public class UserServiceImpl implements UserService {
             throw new ParameterCheckException("用户名已存在！");
         }
 
-        // 校验手机号码是否重复
+        // 校验邮箱是否重复
         LambdaQueryWrapper<UserInfoPO> userInfoQueryWrapper = new LambdaQueryWrapper<>();
-        userInfoQueryWrapper.eq(UserInfoPO::getPhone, reqDto.getPhone());
+        userInfoQueryWrapper.eq(UserInfoPO::getEmail, reqDto.getEmail());
         UserInfoPO userInfoRes = userInfoMapper.selectOne(userInfoQueryWrapper);
         if (userInfoRes != null) {
-            throw new ParameterCheckException("该号码已存在注册账户！");
+            throw new ParameterCheckException("该邮箱已存在注册账户！");
         }
 
         // 新增用户
@@ -116,10 +122,11 @@ public class UserServiceImpl implements UserService {
         userInfo.setNickname(userPo.getId() + ":" + RandomUtil.randomString(10));
         userInfo.setGender(1);
         userInfo.setAvatar("");
-        userInfo.setPhone(reqDto.getPhone());
+        userInfo.setEmail(reqDto.getEmail());
         userInfo.setUpdateTime(new Date());
         userInfo.setCreateTime(new Date());
         userInfoMapper.insert(userInfo);
+        smsCodeHolder.invalidate(reqDto.getUsername());
     }
 
     @Override
@@ -129,21 +136,27 @@ public class UserServiceImpl implements UserService {
             throw new ParameterCheckException("两次密码不一致！");
         }
         LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
+        // 输入旧密码方式修改密码
         if (ReviseReqDto.TYPE_OLD_PASSWORD.equals(reqDto.getType())) {
             if (StrUtil.isBlank(reqDto.getOldPassword())) {
                 throw new ParameterCheckException("旧密码不可为空！");
             }
             userQueryWrapper.eq(UserPO::getPassword, MD5Util.encrypt(reqDto.getOldPassword()));
-        } else {
-            // todo 验证短信验证码是否正确（当前写死666）
-            if (!"666".equals(reqDto.getSmsCode())) {
-                throw new ParameterCheckException("验证码不正确！");
-            }
         }
         userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
         UserPO user = userMapper.selectOne(userQueryWrapper);
         if (user == null) {
             throw new ParameterCheckException("用户名或密码错误！");
+        }
+
+        // 短信方式修改密码
+        if (ReviseReqDto.TYPE_SMS_CODE.equals(reqDto.getType())) {
+            String smsCode = smsCodeHolder.get(user.getUserName(), (k) -> null);
+            if (reqDto.getSmsCode() == null || !StrUtil.equals(reqDto.getSmsCode(), smsCode)) {
+                throw new ParameterCheckException("验证码错误或过期！");
+            } else {
+                smsCodeHolder.invalidate(user.getUserName());
+            }
         }
 
         // 修改密码
@@ -210,7 +223,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void sendSmsCode(SmsCodeSendReqDto reqDto) {
-        // TODO 发送验证码
+        String email = reqDto.getEmail();
+        // 若是修改密码则需要验证用户名
+        if (reqDto.getEmail() == null) {
+            UserInfoDto userInfoDto = userInfoMapper.queryUserInfoByUsername(reqDto.getUsername());
+            if (userInfoDto == null) {
+                throw new ParameterCheckException("用户名不存在！");
+            }
+            email = userInfoDto.getEmail();
+        }
+        // 发送验证码
+        String smsCode = RandomUtil.randomNumbers(6);
+        EmailHelper.sendSimple(email, "肉包科技", "验证码: " + smsCode);
+        smsCodeHolder.putAtom(reqDto.getUsername(), smsCode);
     }
 
     @Override

@@ -44,8 +44,8 @@ public class UserInfoPO implements Serializable {
     /**
      * 电话号码
      */
-    @TableField("phone")
-    private String phone;
+    @TableField("email")
+    private String email;
     /**
      * 创建时间
      */

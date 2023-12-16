@@ -2,7 +2,7 @@ package com.roubao.config.auth;
 
 import com.roubao.config.exception.AuthException;
 import com.roubao.config.superadmin.SuperAdmin;
-import com.roubao.config.token.TokenCacheHolder;
+import com.roubao.config.cache.token.TokenCacheHolder;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.service.UserService;
 import com.roubao.utils.SpringContextHolder;

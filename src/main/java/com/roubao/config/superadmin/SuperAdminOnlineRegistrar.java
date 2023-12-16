@@ -1,7 +1,7 @@
 package com.roubao.config.superadmin;
 
 import cn.hutool.core.util.StrUtil;
-import com.roubao.config.token.TokenCacheHolder;
+import com.roubao.config.cache.token.TokenCacheHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

@@ -1,4 +1,4 @@
-package com.roubao.config.token;
+package com.roubao.config.cache.token;
 
 import lombok.Data;
 import lombok.ToString;
@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  **/
 @Data
 @ToString
-@ConfigurationProperties(prefix = "token.cache")
+@ConfigurationProperties(prefix = "cache.token")
 public class TokenCacheProperties {
     /**
      * 过期时间（单位秒）
