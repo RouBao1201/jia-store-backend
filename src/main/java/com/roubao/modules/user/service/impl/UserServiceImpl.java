@@ -198,6 +198,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void logout() {
         String token = Objects.requireNonNull(SessionUtil.getRequest()).getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
+        userCacheService.invalidateUserCache(tokenCacheHolder.getUserId(token));
         tokenCacheHolder.invalidate(token);
         SessionUtil.removeAttribute(USER_LOGIN_STATE);
     }
