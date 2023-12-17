@@ -1,5 +1,6 @@
 package com.roubao;
 
+import com.roubao.config.superadmin.EnableSuperAdminOnline;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

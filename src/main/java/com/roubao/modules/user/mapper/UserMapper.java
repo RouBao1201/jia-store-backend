@@ -1,10 +1,9 @@
 package com.roubao.modules.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.roubao.domian.AuthorityPO;
-import com.roubao.domian.RolePO;
-import com.roubao.domian.UserPO;
-import com.roubao.modules.user.dto.UserInfoDto;
+import com.roubao.domain.AuthorityPO;
+import com.roubao.domain.RolePO;
+import com.roubao.domain.UserPO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

@@ -2,10 +2,10 @@ package com.roubao.modules.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import com.roubao.domian.AuthorityPO;
-import com.roubao.domian.RolePO;
-import com.roubao.domian.UserInfoPO;
-import com.roubao.domian.UserPO;
+import com.roubao.domain.AuthorityPO;
+import com.roubao.domain.RolePO;
+import com.roubao.domain.UserInfoPO;
+import com.roubao.domain.UserPO;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.UserAuthorityDto;
 import com.roubao.modules.user.dto.UserInfoDto;

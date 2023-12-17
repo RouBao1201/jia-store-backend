@@ -1,4 +1,4 @@
-package com.roubao.domian;
+package com.roubao.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;

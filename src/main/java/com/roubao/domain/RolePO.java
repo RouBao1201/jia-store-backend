@@ -1,4 +1,4 @@
-package com.roubao.domian;
+package com.roubao.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -12,18 +12,17 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 权限
+ * 角色表
  *
- * @author SongYanBin
- * @copyright 2023-2099 SongYanBin All Rights Reserved.
- * @since 2023/12/10
- **/
-@TableName("authority")
+ * @author: SongYanBin
+ * @date: 2023-12-11
+ */
 @Data
 @ToString
-public class AuthorityPO implements Serializable {
+@TableName(value = "role")
+public class RolePO implements Serializable {
     @Serial
-    private static final long serialVersionUID = 8028989078975000753L;
+    private static final long serialVersionUID = 4058147078997613255L;
 
     // 禁用状态
     public static final Integer STATUS_DISABLE = 0;
@@ -38,19 +37,10 @@ public class AuthorityPO implements Serializable {
     private Integer id;
 
     /**
-     * 权限KEY
-     */
-    @TableField("auth_key")
-    private String authKey;
-
-    /**
-     * 权限名称
+     * 角色名称
      */
     @TableField("name")
     private String name;
-
-    @TableField("type")
-    private String type;
 
     /**
      * 状态

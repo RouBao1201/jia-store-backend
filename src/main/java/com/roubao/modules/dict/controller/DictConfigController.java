@@ -1,7 +1,9 @@
 package com.roubao.modules.dict.controller;
 
+import com.roubao.common.response.PageResult;
 import com.roubao.common.response.RespResult;
-import com.roubao.domian.DictConfigPO;
+import com.roubao.domain.DictConfigPO;
+import com.roubao.modules.dict.dto.DictConfigPageQueryReqDto;
 import com.roubao.modules.dict.dto.DictConfigReqDto;
 import com.roubao.modules.dict.service.DictConfigService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,5 +35,11 @@ public class DictConfigController {
     @PostMapping("/dictConfig")
     public RespResult<List<DictConfigPO>> getDictConfig(@Validated @RequestBody DictConfigReqDto reqDto) {
         return RespResult.success(dictConfigService.getDictConfigByKey(reqDto.getDictKey()));
+    }
+
+    @Operation(summary = "分页查询字典配置", description = "分页查询字典配置")
+    @PostMapping("/list")
+    public PageResult<DictConfigPO> getList(@Validated @RequestBody DictConfigPageQueryReqDto reqDto) {
+        return PageResult.success(dictConfigService.getPageList(reqDto));
     }
 }

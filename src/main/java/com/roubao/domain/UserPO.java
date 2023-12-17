@@ -1,4 +1,4 @@
-package com.roubao.domian;
+package com.roubao.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -12,17 +12,18 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 角色表
+ * 用户表
  *
- * @author: SongYanBin
- * @date: 2023-12-11
- */
+ * @author SongYanBin
+ * @copyright 2023-2099 SongYanBin All Rights Reserved.
+ * @since 2023/12/9
+ **/
 @Data
 @ToString
-@TableName(value = "role")
-public class RolePO implements Serializable {
+@TableName(value = "user")
+public class UserPO implements Serializable {
     @Serial
-    private static final long serialVersionUID = 4058147078997613255L;
+    private static final long serialVersionUID = -6814434220139328820L;
 
     // 禁用状态
     public static final Integer STATUS_DISABLE = 0;
@@ -30,32 +31,33 @@ public class RolePO implements Serializable {
     public static final Integer STATUS_ENABLED = 1;
 
     /**
-     * 主键ID
+     * 用户id
      */
     @TableId(value = "id", type = IdType.AUTO)
     @TableField("id")
     private Integer id;
-
     /**
-     * 角色名称
+     * 用户名
      */
-    @TableField("name")
-    private String name;
-
+    @TableField("userName")
+    private String userName;
+    /**
+     * 密码
+     */
+    @TableField("password")
+    private String password;
     /**
      * 状态
      */
     @TableField("status")
     private Integer status;
-
     /**
      * 创建时间
      */
     @TableField("create_time")
     private Date createTime;
-
     /**
-     * 修改时间
+     * 更新时间
      */
     @TableField("update_time")
     private Date updateTime;

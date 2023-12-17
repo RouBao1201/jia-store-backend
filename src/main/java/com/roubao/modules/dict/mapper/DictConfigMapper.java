@@ -1,8 +1,11 @@
 package com.roubao.modules.dict.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.roubao.domian.DictConfigPO;
+import com.roubao.domain.DictConfigPO;
+import com.roubao.modules.dict.dto.DictConfigPageQueryReqDto;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * 字典表Mapper
@@ -12,4 +15,12 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface DictConfigMapper extends BaseMapper<DictConfigPO> {
+
+    /**
+     * 查询字典配置
+     *
+     * @param reqDto 查询请求体
+     * @return 字典数据集合
+     */
+    List<DictConfigPO> queryPageDictConfig(DictConfigPageQueryReqDto reqDto);
 }

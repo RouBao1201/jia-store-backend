@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.roubao.modules.dict.mapper.DictConfigMapper">
+    <select id="queryPageDictConfig" resultType="com.roubao.domain.DictConfigPO">
+        SELECT dict_key, label, value
+        FROM dict_config
+        WHERE 1 = 1
+        <if test="dictKey != null and dictKey != ''">
+            AND dict_key = #{dictKey}
+        </if>
+        <if test="label != null and label != ''">
+            AND label = #{label}
+        </if>
+        <if test="value != null and value != ''">
+            AND value = #{value}
+        </if>
+    </select>
+</mapper>

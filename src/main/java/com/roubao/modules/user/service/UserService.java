@@ -1,6 +1,6 @@
 package com.roubao.modules.user.service;
 
-import com.roubao.domian.AuthorityPO;
+import com.roubao.domain.AuthorityPO;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
