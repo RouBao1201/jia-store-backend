@@ -83,7 +83,6 @@ create table role_authority
         primary key,
     role_id      int                    not null comment '角色ID',
     authority_id int                    not null comment '权限ID',
-    status       tinyint                not null comment '状态：0-失效；1-生效',
     create_time  datetime default now() not null comment '创建时间',
     update_time  datetime default now() not null comment '修改时间'
 ) comment '角色权限表';
@@ -136,7 +135,6 @@ create table menu_authority
         primary key,
     menu_id      int                    not null comment '菜单ID',
     authority_id int                    not null comment '权限ID',
-    status       tinyint                not null comment '状态：0-失效；1-生效',
     create_time  datetime default now() not null comment '创建时间',
     update_time  datetime default now() not null comment '修改时间'
 ) comment '菜单权限表';
