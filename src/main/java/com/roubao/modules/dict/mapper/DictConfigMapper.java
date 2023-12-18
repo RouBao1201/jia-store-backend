@@ -22,5 +22,5 @@ public interface DictConfigMapper extends BaseMapper<DictConfigPO> {
      * @param reqDto 查询请求体
      * @return 字典数据集合
      */
-    List<DictConfigPO> queryPageDictConfig(DictConfigPageQueryReqDto reqDto);
+    List<DictConfigPO> selectPageDictConfig(DictConfigPageQueryReqDto reqDto);
 }

@@ -92,6 +92,8 @@ create table role_authority
 drop table if exists dict_config;
 create table dict_config
 (
+    id          serial                             not null comment '主键ID'
+        primary key,
     dict_key    varchar(25)                        not null comment '字典KEY',
     label       varchar(25)                        not null comment '字典标签',
     value       varchar(50)                        not null comment '字典标签值',

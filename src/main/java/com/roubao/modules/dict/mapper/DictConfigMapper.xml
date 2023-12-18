@@ -3,8 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roubao.modules.dict.mapper.DictConfigMapper">
-    <select id="queryPageDictConfig" resultType="com.roubao.domain.DictConfigPO">
-        SELECT dict_key, label, value
+    <select id="selectPageDictConfig" resultType="com.roubao.domain.DictConfigPO">
+        SELECT id, dict_key, label, value
         FROM dict_config
         WHERE 1 = 1
         <if test="dictKey != null and dictKey != ''">
@@ -16,5 +16,6 @@
         <if test="value != null and value != ''">
             AND value = #{value}
         </if>
+        ORDER BY id
     </select>
 </mapper>

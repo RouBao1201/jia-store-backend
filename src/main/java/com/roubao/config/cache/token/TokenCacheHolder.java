@@ -30,7 +30,7 @@ public class TokenCacheHolder {
      */
     public static String generateTokenAndCache(Integer userId) {
         String token = MD5Util.encrypt(System.currentTimeMillis() + userId + new Random().nextInt() + "");
-        RedisHelper.set(RedisKey.PREFIX_USER_TOKEN + token, userId, 20, TimeUnit.MINUTES);
+        RedisHelper.set(RedisKey.PREFIX_USER_TOKEN + token, userId, 30, TimeUnit.MINUTES);
         return token;
     }
 
@@ -66,5 +66,17 @@ public class TokenCacheHolder {
         String token = SessionUtil.getRequest().getHeader(TOKEN_HEADER_KEY);
         Integer cacheUserId = RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, Integer.class);
         return Objects.equals(userId, cacheUserId);
+    }
+
+    /**
+     * 续期token有效期
+     *
+     * @param key      键
+     * @param time     时间
+     * @param timeUnit 时间单位
+     * @return 是否成功
+     */
+    public static boolean renewal(String token, long time, TimeUnit timeUnit) {
+        return RedisHelper.expire(token, time, timeUnit);
     }
 }

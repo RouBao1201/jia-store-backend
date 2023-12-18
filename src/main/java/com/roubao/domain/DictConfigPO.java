@@ -1,6 +1,8 @@
 package com.roubao.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.ToString;
@@ -21,6 +23,13 @@ import java.util.Date;
 public class DictConfigPO implements Serializable {
     @Serial
     private static final long serialVersionUID = 4242699905342207660L;
+
+    /**
+     * 主键ID
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    @TableField("id")
+    private Integer id;
 
     /**
      * 字典KEY

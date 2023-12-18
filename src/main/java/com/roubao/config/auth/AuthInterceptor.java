@@ -1,5 +1,6 @@
 package com.roubao.config.auth;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.roubao.common.constants.RedisKey;
 import com.roubao.config.cache.token.TokenCacheHolder;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -58,10 +61,11 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (disableToken == null) {
             // 校验token合法性
             String token = request.getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
-            String tokenFlag = RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, String.class);
-            if (token == null || StrUtil.isBlank(tokenFlag)) {
+            Integer userId = RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, Integer.class);
+            if (token == null || ObjUtil.isEmpty(userId)) {
                 throw new AuthException("用户登录失效，请重新登录");
             }
+            TokenCacheHolder.renewal(token, 30, TimeUnit.MINUTES);
         }
     }
 

@@ -75,6 +75,17 @@ public class RespResult<T> implements Serializable {
     /**
      * 成功响应
      *
+     * @param message 消息
+     * @param <T>     数据类型
+     * @return RespResult
+     */
+    public static <T> RespResult<T> success(String message) {
+        return new RespResult<>(CODE_SUCCESS, message, null);
+    }
+
+    /**
+     * 成功响应
+     *
      * @param data 响应数据
      * @param <T>  数据泛型
      * @return RespResult
