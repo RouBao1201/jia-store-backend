@@ -21,6 +21,17 @@ public class EitherUtil {
     }
 
     /**
+     * 对象不为空则抛异常
+     *
+     * @param obj       对象
+     * @param errorCode 错误编码
+     * @param errorMsg  错误信息
+     */
+    public static void throwIfNotNull(Object obj, int errorCode, String errorMsg) {
+        throwIf(obj != null, errorCode, errorMsg);
+    }
+
+    /**
      * 判断是否抛出异常
      *
      * @param condition 条件

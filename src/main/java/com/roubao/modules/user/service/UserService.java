@@ -85,12 +85,4 @@ public interface UserService {
      * @return 用户权限
      */
     Map<String, AuthorityPO> getUserAuthority(Integer userId);
-
-    /**
-     * 校验是否为当前登录用户
-     *
-     * @param userId 用户ID
-     * @return 校验结果
-     */
-    boolean isCurrentLoginUser(Integer userId);
 }

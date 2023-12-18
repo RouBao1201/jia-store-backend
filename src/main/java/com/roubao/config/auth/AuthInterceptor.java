@@ -1,10 +1,11 @@
 package com.roubao.config.auth;
 
+import cn.hutool.core.util.StrUtil;
+import com.roubao.common.constants.RedisKey;
+import com.roubao.config.cache.token.TokenCacheHolder;
 import com.roubao.config.exception.AuthException;
 import com.roubao.config.superadmin.SuperAdmin;
-import com.roubao.config.cache.token.TokenCacheHolder;
-import com.roubao.modules.user.dto.CurrentUserDto;
-import com.roubao.modules.user.service.UserService;
+import com.roubao.helper.RedisHelper;
 import com.roubao.utils.SpringContextHolder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,8 +58,8 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (disableToken == null) {
             // 校验token合法性
             String token = request.getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
-            TokenCacheHolder tokenCacheHolder = SpringContextHolder.getBean(TokenCacheHolder.class);
-            if (token == null || !tokenCacheHolder.verifyToken(token)) {
+            String tokenFlag = RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, String.class);
+            if (token == null || StrUtil.isBlank(tokenFlag)) {
                 throw new AuthException("用户登录失效，请重新登录");
             }
         }
@@ -73,8 +74,8 @@ public class AuthInterceptor implements HandlerInterceptor {
             String[] value = checkAccessAnno.value();
             if (value.length == 0) {
             } else {
-                UserService userServiceBean = SpringContextHolder.getBean(UserService.class);
-                CurrentUserDto currentUser = userServiceBean.getCurrentUser();
+//                UserService userServiceBean = SpringContextHolder.getBean(UserService.class);
+//                CurrentUserDto currentUser = userServiceBean.getCurrentUser();
                 // TODO 用户权限校验 不通过则抛出AuthException终止程序
             }
         }

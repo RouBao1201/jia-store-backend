@@ -51,7 +51,6 @@ public class SuperAdminOnlineRegistrar implements ImportBeanDefinitionRegistrar,
             ConstructorArgumentValues constructorArgumentValues = beanDefinition.getConstructorArgumentValues();
             constructorArgumentValues.addIndexedArgumentValue(0, userId);
             registry.registerBeanDefinition(SuperAdmin.BEAN_NAME, beanDefinition);
-            TokenCacheHolder.SUPER_ADMIN_ONLINE = true;
             log.info("SuperAdminOnlineRegistrar ==> 超级管理员[{}]，已上线！环境配置文件：[{}]，注解配置：[{}].",
                     userId, StrUtil.join(",", environment.getActiveProfiles()), StrUtil.join("/", includeProfiles));
         }

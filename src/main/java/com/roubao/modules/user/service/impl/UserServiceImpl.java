@@ -1,18 +1,18 @@
 package com.roubao.modules.user.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.roubao.common.constants.ErrorCode;
-import com.roubao.config.cache.sms.SmsCodeHolder;
+import com.roubao.common.constants.RedisKey;
 import com.roubao.config.cache.token.TokenCacheHolder;
 import com.roubao.domain.AuthorityPO;
 import com.roubao.domain.UserInfoPO;
 import com.roubao.domain.UserPO;
 import com.roubao.helper.EmailHelper;
+import com.roubao.helper.RedisHelper;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
@@ -27,7 +27,6 @@ import com.roubao.modules.user.service.UserCacheService;
 import com.roubao.modules.user.service.UserService;
 import com.roubao.utils.EitherUtil;
 import com.roubao.utils.MD5Util;
-import com.roubao.utils.SessionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -53,19 +53,11 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final String USER_LOGIN_STATE = "USER_LOGIN_STATE";
-
     @Autowired
     private UserMapper userMapper;
 
     @Autowired
     private UserCacheService userCacheService;
-
-    @Autowired
-    private TokenCacheHolder tokenCacheHolder;
-
-    @Autowired
-    private SmsCodeHolder smsCodeHolder;
 
     @Autowired
     private UserInfoMapper userInfoMapper;
@@ -80,9 +72,8 @@ public class UserServiceImpl implements UserService {
         UserPO userPo = userMapper.selectOne(userQueryWrapper);
         EitherUtil.throwIfNull(userPo, ErrorCode.PARAM_ERROR, "用户名或密码错误！");
         LoginRespDto loginRespDto = new LoginRespDto();
-        String token = tokenCacheHolder.generateTokenAndPutAtom(userPo.getId());
+        String token = TokenCacheHolder.generateTokenAndCache(userPo.getId());
         loginRespDto.setToken(token);
-        SessionUtil.setAttribute(USER_LOGIN_STATE, userPo.getId());
         return loginRespDto;
     }
 
@@ -93,13 +84,17 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
         userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
         UserPO userRes = userMapper.selectOne(userQueryWrapper);
-        EitherUtil.throwIfNull(userRes, ErrorCode.PARAM_ERROR, "用户名已存在！");
+        EitherUtil.throwIfNotNull(userRes, ErrorCode.PARAM_ERROR, "用户名已存在！");
 
         // 校验邮箱是否重复
         LambdaQueryWrapper<UserInfoPO> userInfoQueryWrapper = new LambdaQueryWrapper<>();
         userInfoQueryWrapper.eq(UserInfoPO::getEmail, reqDto.getEmail());
         UserInfoPO userInfoRes = userInfoMapper.selectOne(userInfoQueryWrapper);
-        EitherUtil.throwIfNull(userInfoRes, ErrorCode.PARAM_ERROR, "该邮箱已存在注册账户！");
+        EitherUtil.throwIfNotNull(userInfoRes, ErrorCode.PARAM_ERROR, "该邮箱已存在注册账户！");
+
+        // 校验验证码是否正确
+        String cacheSmsCode = RedisHelper.get(RedisKey.PREFIX_USER_SMS_CODE + reqDto.getUsername(), String.class);
+        EitherUtil.throwIf(!StrUtil.equals(cacheSmsCode, reqDto.getSmsCode()), ErrorCode.PARAM_ERROR, "验证码错误或过期！");
 
         // 新增用户
         UserPO userPo = new UserPO();
@@ -120,7 +115,7 @@ public class UserServiceImpl implements UserService {
         userInfo.setUpdateTime(new Date());
         userInfo.setCreateTime(new Date());
         userInfoMapper.insert(userInfo);
-        smsCodeHolder.invalidate(reqDto.getUsername());
+        RedisHelper.delete(RedisKey.PREFIX_USER_SMS_CODE + reqDto.getUsername());
     }
 
     @Override
@@ -139,9 +134,9 @@ public class UserServiceImpl implements UserService {
 
         // 短信方式修改密码
         if (ReviseReqDto.TYPE_SMS_CODE.equals(reqDto.getType())) {
-            String smsCode = smsCodeHolder.get(user.getUserName(), (k) -> null);
-            EitherUtil.throwIf(!StrUtil.equals(reqDto.getSmsCode(), smsCode), ErrorCode.PARAM_ERROR, "验证码错误或过期！");
-            smsCodeHolder.invalidate(user.getUserName());
+            String cacheSmsCode = RedisHelper.get(RedisKey.PREFIX_USER_SMS_CODE + reqDto.getUsername(), String.class);
+            EitherUtil.throwIf(!StrUtil.equals(reqDto.getSmsCode(), cacheSmsCode), ErrorCode.PARAM_ERROR, "验证码错误或过期！");
+            RedisHelper.delete(RedisKey.PREFIX_USER_SMS_CODE + reqDto.getUsername());
         }
 
         // 修改密码
@@ -162,7 +157,7 @@ public class UserServiceImpl implements UserService {
         EitherUtil.throwIfNull(user, ErrorCode.PARAM_ERROR, "用户名不存在！");
 
         // 校验修改的是否为当前登陆人自己的信息
-        boolean currentLoginUser = isCurrentLoginUser(user.getId());
+        boolean currentLoginUser = TokenCacheHolder.isCurrentLoginUser(user.getId());
         EitherUtil.throwIf(!currentLoginUser, ErrorCode.PARAM_ERROR, "不允许修改他人用户信息！");
 
         // 修改用户信息
@@ -179,15 +174,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout() {
-        String token = Objects.requireNonNull(SessionUtil.getRequest()).getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
-        userCacheService.invalidateUserCache(tokenCacheHolder.getUserId(token));
-        tokenCacheHolder.invalidate(token);
-        SessionUtil.removeAttribute(USER_LOGIN_STATE);
+        userCacheService.invalidateUserCache(TokenCacheHolder.getCurrentUserId());
+        TokenCacheHolder.cleanCurrentUserCache();
     }
 
     @Override
     public CurrentUserDto getCurrentUser() {
-        Integer currentUserId = tokenCacheHolder.getCurrentUserId();
+        Integer currentUserId = TokenCacheHolder.getCurrentUserId();
         EitherUtil.throwIfNull(currentUserId, ErrorCode.AUTH_ERROR, "用户登录状态已失效！");
         CurrentUserDto user = userCacheService.getUserById(currentUserId);
         EitherUtil.throwIfNull(user, ErrorCode.AUTH_ERROR, "用户不存在！");
@@ -212,7 +205,7 @@ public class UserServiceImpl implements UserService {
         // 发送验证码
         String smsCode = RandomUtil.randomNumbers(6);
         EmailHelper.sendSimple(email, "肉包仔", "验证码: " + smsCode);
-        smsCodeHolder.putAtom(reqDto.getUsername(), smsCode);
+        RedisHelper.set(RedisKey.PREFIX_USER_SMS_CODE + reqDto.getUsername(), smsCode, 60, TimeUnit.SECONDS);
     }
 
     @Override
@@ -222,10 +215,5 @@ public class UserServiceImpl implements UserService {
             return authorityList.stream().collect(Collectors.toMap(AuthorityPO::getAuthKey, Function.identity()));
         }
         return new HashMap<>();
-    }
-
-    @Override
-    public boolean isCurrentLoginUser(Integer userId) {
-        return ObjUtil.equals(tokenCacheHolder.getCurrentUserId(), userId);
     }
 }

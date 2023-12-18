@@ -33,7 +33,7 @@ import java.util.List;
 @Service
 @CacheConfig(cacheNames = "user")
 public class UserCacheServiceImpl implements UserCacheService {
-    private static final String CURRENT_USER_CACHE_PREFIX = "CURRENT_USER_CACHE_";
+    private static final String CURRENT_USER_CACHE_PREFIX = "user:currentUser:";
 
     @Autowired
     private UserMapper userMapper;

@@ -24,5 +24,4 @@ public class JiaStoreApplication {
         SpringApplication app = new SpringApplication(JiaStoreApplication.class);
         app.run(args);
     }
-
 }
