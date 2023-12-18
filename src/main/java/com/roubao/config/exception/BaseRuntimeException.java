@@ -14,7 +14,7 @@ public class BaseRuntimeException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = -4569556263785675784L;
 
-    private final int code = HttpStatus.INTERNAL_SERVER_ERROR.value();
+    private int code = HttpStatus.INTERNAL_SERVER_ERROR.value();
 
     public int getCode() {
         return code;
@@ -31,6 +31,11 @@ public class BaseRuntimeException extends RuntimeException {
     public BaseRuntimeException() {
     }
 
+    public BaseRuntimeException(Integer code, String message) {
+        super(message);
+        this.code = code;
+    }
+
     public BaseRuntimeException(String message) {
         super(message);
     }
@@ -42,4 +47,5 @@ public class BaseRuntimeException extends RuntimeException {
     public BaseRuntimeException(Throwable cause) {
         super(cause);
     }
+
 }

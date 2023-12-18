@@ -6,10 +6,9 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.roubao.common.constants.ErrorCode;
 import com.roubao.config.cache.sms.SmsCodeHolder;
 import com.roubao.config.cache.token.TokenCacheHolder;
-import com.roubao.config.exception.AuthException;
-import com.roubao.config.exception.ParameterCheckException;
 import com.roubao.domain.AuthorityPO;
 import com.roubao.domain.UserInfoPO;
 import com.roubao.domain.UserPO;
@@ -26,6 +25,7 @@ import com.roubao.modules.user.mapper.UserInfoMapper;
 import com.roubao.modules.user.mapper.UserMapper;
 import com.roubao.modules.user.service.UserCacheService;
 import com.roubao.modules.user.service.UserService;
+import com.roubao.utils.EitherUtil;
 import com.roubao.utils.MD5Util;
 import com.roubao.utils.SessionUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -78,9 +78,7 @@ public class UserServiceImpl implements UserService {
         userQueryWrapper.eq(UserPO::getPassword, MD5Util.encrypt(reqDto.getPassword()));
         userQueryWrapper.eq(UserPO::getStatus, 1);
         UserPO userPo = userMapper.selectOne(userQueryWrapper);
-        if (userPo == null) {
-            throw new ParameterCheckException("用户名或密码错误！");
-        }
+        EitherUtil.throwIfNull(userPo, ErrorCode.PARAM_ERROR, "用户名或密码错误！");
         LoginRespDto loginRespDto = new LoginRespDto();
         String token = tokenCacheHolder.generateTokenAndPutAtom(userPo.getId());
         loginRespDto.setToken(token);
@@ -95,17 +93,13 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
         userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
         UserPO userRes = userMapper.selectOne(userQueryWrapper);
-        if (userRes != null) {
-            throw new ParameterCheckException("用户名已存在！");
-        }
+        EitherUtil.throwIfNull(userRes, ErrorCode.PARAM_ERROR, "用户名已存在！");
 
         // 校验邮箱是否重复
         LambdaQueryWrapper<UserInfoPO> userInfoQueryWrapper = new LambdaQueryWrapper<>();
         userInfoQueryWrapper.eq(UserInfoPO::getEmail, reqDto.getEmail());
         UserInfoPO userInfoRes = userInfoMapper.selectOne(userInfoQueryWrapper);
-        if (userInfoRes != null) {
-            throw new ParameterCheckException("该邮箱已存在注册账户！");
-        }
+        EitherUtil.throwIfNull(userInfoRes, ErrorCode.PARAM_ERROR, "该邮箱已存在注册账户！");
 
         // 新增用户
         UserPO userPo = new UserPO();
@@ -132,31 +126,22 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void revisePassword(ReviseReqDto reqDto) {
-        if (!Objects.equals(reqDto.getNewPassword(), reqDto.getCheckPassword())) {
-            throw new ParameterCheckException("两次密码不一致！");
-        }
+        EitherUtil.throwIf(!Objects.equals(reqDto.getNewPassword(), reqDto.getCheckPassword()), ErrorCode.PARAM_ERROR, "两次密码不一致！");
         LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
         // 输入旧密码方式修改密码
         if (ReviseReqDto.TYPE_OLD_PASSWORD.equals(reqDto.getType())) {
-            if (StrUtil.isBlank(reqDto.getOldPassword())) {
-                throw new ParameterCheckException("旧密码不可为空！");
-            }
+            EitherUtil.throwIf(StrUtil.isBlank(reqDto.getOldPassword()), ErrorCode.PARAM_ERROR, "旧密码不可为空！");
             userQueryWrapper.eq(UserPO::getPassword, MD5Util.encrypt(reqDto.getOldPassword()));
         }
         userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
         UserPO user = userMapper.selectOne(userQueryWrapper);
-        if (user == null) {
-            throw new ParameterCheckException("用户名或密码错误！");
-        }
+        EitherUtil.throwIfNull(user, ErrorCode.PARAM_ERROR, "用户名或密码错误！");
 
         // 短信方式修改密码
         if (ReviseReqDto.TYPE_SMS_CODE.equals(reqDto.getType())) {
             String smsCode = smsCodeHolder.get(user.getUserName(), (k) -> null);
-            if (reqDto.getSmsCode() == null || !StrUtil.equals(reqDto.getSmsCode(), smsCode)) {
-                throw new ParameterCheckException("验证码错误或过期！");
-            } else {
-                smsCodeHolder.invalidate(user.getUserName());
-            }
+            EitherUtil.throwIf(!StrUtil.equals(reqDto.getSmsCode(), smsCode), ErrorCode.PARAM_ERROR, "验证码错误或过期！");
+            smsCodeHolder.invalidate(user.getUserName());
         }
 
         // 修改密码
@@ -174,14 +159,11 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
         userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
         UserPO user = userMapper.selectOne(userQueryWrapper);
-        if (user == null) {
-            throw new ParameterCheckException("用户名不存在！");
-        }
+        EitherUtil.throwIfNull(user, ErrorCode.PARAM_ERROR, "用户名不存在！");
+
         // 校验修改的是否为当前登陆人自己的信息
         boolean currentLoginUser = isCurrentLoginUser(user.getId());
-        if (!currentLoginUser) {
-            throw new ParameterCheckException("不允许修改他人用户信息");
-        }
+        EitherUtil.throwIf(!currentLoginUser, ErrorCode.PARAM_ERROR, "不允许修改他人用户信息！");
 
         // 修改用户信息
         LambdaUpdateWrapper<UserInfoPO> userInfoUpdateWrapper = new LambdaUpdateWrapper<>();
@@ -206,13 +188,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public CurrentUserDto getCurrentUser() {
         Integer currentUserId = tokenCacheHolder.getCurrentUserId();
-        if (currentUserId == null) {
-            throw new AuthException("用户登录状态已失效！");
-        }
+        EitherUtil.throwIfNull(currentUserId, ErrorCode.AUTH_ERROR, "用户登录状态已失效！");
         CurrentUserDto user = userCacheService.getUserById(currentUserId);
-        if (user == null) {
-            throw new AuthException("用户不存在！");
-        }
+        EitherUtil.throwIfNull(user, ErrorCode.AUTH_ERROR, "用户不存在！");
         return user;
     }
 
@@ -228,14 +206,12 @@ public class UserServiceImpl implements UserService {
         // 若是修改密码则需要验证用户名
         if (reqDto.getEmail() == null) {
             UserInfoDto userInfoDto = userInfoMapper.queryUserInfoByUsername(reqDto.getUsername());
-            if (userInfoDto == null) {
-                throw new ParameterCheckException("用户名不存在！");
-            }
+            EitherUtil.throwIfNull(userInfoDto, ErrorCode.PARAM_ERROR, "用户名不存在！");
             email = userInfoDto.getEmail();
         }
         // 发送验证码
         String smsCode = RandomUtil.randomNumbers(6);
-        EmailHelper.sendSimple(email, "肉包科技", "验证码: " + smsCode);
+        EmailHelper.sendSimple(email, "肉包仔", "验证码: " + smsCode);
         smsCodeHolder.putAtom(reqDto.getUsername(), smsCode);
     }
 
