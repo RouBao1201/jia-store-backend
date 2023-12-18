@@ -1,6 +1,5 @@
 package com.roubao.modules.user.service.impl;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -8,7 +7,6 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.roubao.common.constants.ErrorCode;
 import com.roubao.common.constants.RedisKey;
 import com.roubao.config.cache.token.TokenCacheHolder;
-import com.roubao.domain.AuthorityPO;
 import com.roubao.domain.UserInfoPO;
 import com.roubao.domain.UserPO;
 import com.roubao.helper.EmailHelper;
@@ -33,13 +31,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 /**
@@ -188,12 +181,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isSuperAdmin(Integer userId) {
-        Integer superAdmin = userMapper.isSuperAdmin(userId);
-        return superAdmin != null;
-    }
-
-    @Override
     public void sendSmsCode(SmsCodeSendReqDto reqDto) {
         String email = reqDto.getEmail();
         // 若是修改密码则需要验证用户名
@@ -206,14 +193,5 @@ public class UserServiceImpl implements UserService {
         String smsCode = RandomUtil.randomNumbers(6);
         EmailHelper.sendSimple(email, "肉包仔", "验证码: " + smsCode);
         RedisHelper.set(RedisKey.PREFIX_USER_SMS_CODE + reqDto.getUsername(), smsCode, 60, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public Map<String, AuthorityPO> getUserAuthority(Integer userId) {
-        List<AuthorityPO> authorityList = userMapper.queryUserAuthority(userId);
-        if (CollectionUtil.isNotEmpty(authorityList)) {
-            return authorityList.stream().collect(Collectors.toMap(AuthorityPO::getAuthKey, Function.identity()));
-        }
-        return new HashMap<>();
     }
 }

@@ -1,6 +1,5 @@
 package com.roubao.modules.user.service;
 
-import com.roubao.domain.AuthorityPO;
 import com.roubao.modules.user.dto.CurrentUserDto;
 import com.roubao.modules.user.dto.LoginReqDto;
 import com.roubao.modules.user.dto.LoginRespDto;
@@ -8,8 +7,6 @@ import com.roubao.modules.user.dto.PersonalSettingsReqDto;
 import com.roubao.modules.user.dto.RegisterReqDto;
 import com.roubao.modules.user.dto.ReviseReqDto;
 import com.roubao.modules.user.dto.SmsCodeSendReqDto;
-
-import java.util.Map;
 
 /**
  * 用户业务接口
@@ -64,25 +61,9 @@ public interface UserService {
     CurrentUserDto getCurrentUser();
 
     /**
-     * 判断用户是否为管理员
-     *
-     * @param userId 用户ID
-     * @return boolean
-     */
-    boolean isSuperAdmin(Integer userId);
-
-    /**
      * 短信验证码发送
      *
      * @param reqDto 验证码发送请求体
      */
     void sendSmsCode(SmsCodeSendReqDto reqDto);
-
-    /**
-     * 获取用户权限
-     *
-     * @param userId 用户ID
-     * @return 用户权限
-     */
-    Map<String, AuthorityPO> getUserAuthority(Integer userId);
 }

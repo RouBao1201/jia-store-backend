@@ -12,7 +12,6 @@ import com.roubao.modules.user.dto.SmsCodeSendReqDto;
 import com.roubao.modules.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,7 +84,7 @@ public class UserController {
 
     @Operation(summary = "获取当前用户", description = "获取当前用户")
     @GetMapping("/currentUser")
-    public RespResult<CurrentUserDto> getCurrentUser(HttpServletRequest request) {
+    public RespResult<CurrentUserDto> getCurrentUser() {
         return RespResult.success(userService.getCurrentUser());
     }
 }
