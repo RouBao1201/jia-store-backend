@@ -1,12 +1,15 @@
 package com.roubao.modules.dict.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 字典配置新增请求体
@@ -27,11 +30,8 @@ public class DictConfigCreateReqDto implements Serializable {
     @NotBlank(message = "字典KEY不可为空")
     private String dictKey;
 
-    @Schema(name = "label", description = "标签")
-    @NotBlank(message = "字典标签不可为空")
-    private String label;
-
-    @Schema(name = "value", description = "标签值")
-    @NotBlank(message = "标签值不可为空")
-    private String value;
+    @Schema(name = "dictPair", description = "键值对集合")
+    @Valid
+    @NotNull(message = "键值对不可为空")
+    List<DictPairReqDto> dictPair;
 }
