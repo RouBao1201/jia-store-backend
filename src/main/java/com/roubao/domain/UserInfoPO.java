@@ -24,7 +24,6 @@ public class UserInfoPO implements Serializable {
     private static final long serialVersionUID = -8662216618893386932L;
 
     @TableId(value = "user_id")
-    @TableField("user_id")
     private Integer userId;
     /**
      * 用户昵称

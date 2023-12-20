@@ -34,7 +34,6 @@ public class UserPO implements Serializable {
      * 用户id
      */
     @TableId(value = "id", type = IdType.AUTO)
-    @TableField("id")
     private Integer id;
     /**
      * 用户名

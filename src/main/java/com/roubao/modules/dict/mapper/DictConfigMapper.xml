@@ -18,4 +18,14 @@
         </if>
         ORDER BY id
     </select>
+
+    <select id="selectListByUniques" resultType="com.roubao.domain.DictConfigPO">
+        SELECT id, dict_key, label, value
+        FROM dict_config
+        WHERE dict_key = #{reqDto.dictKey}
+        AND (label, value) IN
+        <foreach collection="reqDto.dictPair" index="index" open="(" separator="," close=")" item="item">
+            (#{item.label}, #{item.value})
+        </foreach>
+    </select>
 </mapper>

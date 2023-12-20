@@ -1,8 +1,10 @@
 package com.roubao.modules.dict.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.roubao.common.constants.ErrorCode;
 import com.roubao.common.response.PageList;
+import com.roubao.config.exception.ParameterCheckException;
 import com.roubao.domain.DictConfigPO;
 import com.roubao.modules.dict.dto.DictConfigCreateReqDto;
 import com.roubao.modules.dict.dto.DictConfigDeleteReqDto;
@@ -18,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,22 +50,21 @@ public class DictConfigServiceImpl implements DictConfigService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createDictConfig(DictConfigCreateReqDto reqDto) {
-//        LambdaQueryWrapper<DictConfigPO> dictConfigQueryWrapper = new LambdaQueryWrapper<>();
-//        dictConfigQueryWrapper.eq(DictConfigPO::getDictKey, reqDto.getDictKey());
-//        dictConfigQueryWrapper.eq(DictConfigPO::getLabel, reqDto.getLabel());
-//        dictConfigQueryWrapper.eq(DictConfigPO::getValue, reqDto.getValue());
-//        boolean exists = dictConfigMapper.exists(dictConfigQueryWrapper);
-//        EitherUtil.throwIf(exists, ErrorCode.PARAM_ERROR, "配置已存在");
-        List<DictPairReqDto> dictPair = reqDto.getDictPair();
-        for (DictPairReqDto pair : dictPair) {
-            DictConfigPO po = new DictConfigPO();
-            po.setDictKey(reqDto.getDictKey());
-            po.setLabel(pair.getLabel());
-            po.setValue(pair.getValue());
-            po.setCreateTime(new Date());
-            po.setUpdateTime(new Date());
-            dictConfigMapper.insert(po);
-        }
+        List<DictConfigPO> exitsUniques = dictConfigMapper.selectListByUniques(reqDto);
+        EitherUtil.bool(CollUtil.isNotEmpty(exitsUniques)).either(() -> {
+            throw new ParameterCheckException(String.format("已存在相同的字典配置: [%s - %s]", exitsUniques.get(0).getLabel(), exitsUniques.get(0).getValue()));
+        }, () -> {
+            List<DictPairReqDto> dictPair = reqDto.getDictPair();
+            for (DictPairReqDto pair : dictPair) {
+                DictConfigPO po = new DictConfigPO();
+                po.setDictKey(reqDto.getDictKey());
+                po.setLabel(pair.getLabel());
+                po.setValue(pair.getValue());
+                po.setCreateTime(new Date());
+                po.setUpdateTime(new Date());
+                dictConfigMapper.insert(po);
+            }
+        });
     }
 
     @Override
