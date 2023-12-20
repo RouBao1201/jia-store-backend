@@ -2,7 +2,6 @@ package com.roubao.modules.dict.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.roubao.common.constants.ErrorCode;
 import com.roubao.common.response.PageList;
 import com.roubao.config.exception.ParameterCheckException;
 import com.roubao.domain.DictConfigPO;
@@ -51,9 +50,10 @@ public class DictConfigServiceImpl implements DictConfigService {
     @Transactional(rollbackFor = Exception.class)
     public void createDictConfig(DictConfigCreateReqDto reqDto) {
         List<DictConfigPO> exitsUniques = dictConfigMapper.selectListByUniques(reqDto);
-        EitherUtil.bool(CollUtil.isNotEmpty(exitsUniques)).either(() -> {
+        EitherUtil.boolE(CollUtil.isNotEmpty(exitsUniques)).either(() -> {
             throw new ParameterCheckException(String.format("已存在相同的字典配置: [%s - %s]", exitsUniques.get(0).getLabel(), exitsUniques.get(0).getValue()));
         }, () -> {
+            // 数据正常就几条无需批量执行
             List<DictPairReqDto> dictPair = reqDto.getDictPair();
             for (DictPairReqDto pair : dictPair) {
                 DictConfigPO po = new DictConfigPO();
@@ -75,14 +75,17 @@ public class DictConfigServiceImpl implements DictConfigService {
         dictConfigQueryWrapper.eq(DictConfigPO::getLabel, reqDto.getLabel());
         dictConfigQueryWrapper.eq(DictConfigPO::getValue, reqDto.getValue());
         boolean exists = dictConfigMapper.exists(dictConfigQueryWrapper);
-        EitherUtil.throwIf(exists, ErrorCode.PARAM_ERROR, "配置已存在");
-        DictConfigPO po = new DictConfigPO();
-        po.setId(reqDto.getId());
-        po.setDictKey(reqDto.getDictKey());
-        po.setLabel(reqDto.getLabel());
-        po.setValue(reqDto.getValue());
-        po.setUpdateTime(new Date());
-        dictConfigMapper.updateById(po);
+        EitherUtil.boolE(exists).either(() -> {
+            throw new RuntimeException("配置已存在");
+        }, () -> {
+            DictConfigPO po = new DictConfigPO();
+            po.setId(reqDto.getId());
+            po.setDictKey(reqDto.getDictKey());
+            po.setLabel(reqDto.getLabel());
+            po.setValue(reqDto.getValue());
+            po.setUpdateTime(new Date());
+            dictConfigMapper.updateById(po);
+        });
     }
 
     @Override

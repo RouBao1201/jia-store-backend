@@ -39,11 +39,8 @@ public class EitherUtil {
      * @param errorMsg  错误信息
      */
     public static void throwIf(boolean condition, int errorCode, String errorMsg) {
-        bool(condition).either(() -> {
-            // 满足条件抛出异常
+        boolT(condition).doIf(() -> {
             throw new BaseRuntimeException(errorCode, errorMsg);
-        }, () -> {
-            // 不满足条件不做操作
         });
     }
 
@@ -53,7 +50,7 @@ public class EitherUtil {
      * @param condition 条件
      * @return true和false分支逻辑函数
      */
-    public static EitherHandleFunction bool(boolean condition) {
+    public static EitherHandleFunction boolE(boolean condition) {
         return (trueHandle, falseHandle) -> {
             if (condition) {
                 trueHandle.run();
@@ -61,6 +58,30 @@ public class EitherUtil {
                 falseHandle.run();
             }
         };
+    }
+
+    /**
+     * 条件为true时执行
+     *
+     * @param condition 条件
+     * @return 执行函数
+     */
+    public static DoHandleFunction boolT(boolean condition) {
+        return (trueHandle) -> {
+            if (condition) {
+                trueHandle.run();
+            }
+        };
+    }
+
+    /**
+     * 条件为false时执行
+     *
+     * @param condition 条件
+     * @return 执行函数
+     */
+    public static DoHandleFunction boolF(boolean condition) {
+        return boolT(!condition);
     }
 
     @FunctionalInterface
@@ -72,6 +93,16 @@ public class EitherUtil {
          * @param falseHandle false分支处理逻辑
          */
         void either(Runnable trueHandle, Runnable falseHandle);
+    }
+
+    @FunctionalInterface
+    public interface DoHandleFunction {
+        /**
+         * 分支处理逻辑
+         *
+         * @param trueHandle true分支处理逻辑
+         */
+        void doIf(Runnable trueHandle);
     }
 
     private EitherUtil() {

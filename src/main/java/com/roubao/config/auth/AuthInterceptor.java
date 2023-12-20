@@ -60,12 +60,15 @@ public class AuthInterceptor implements HandlerInterceptor {
         DisableToken disableToken = handler.getMethod().getAnnotation(DisableToken.class);
         if (disableToken == null) {
             // 校验token合法性
-            String token = request.getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
-            Integer userId = RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, Integer.class);
-            if (token == null || ObjUtil.isEmpty(userId)) {
-                throw new AuthException("用户登录失效，请重新登录");
+            String token = this.getAuthToken(request);
+            if (token != null) {
+                Integer userId = RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, Integer.class);
+                if (ObjUtil.isEmpty(userId)) {
+                    throw new AuthException("用户登录失效，请重新登录");
+                }
+                TokenCacheHolder.renewal(token, 30, TimeUnit.MINUTES);
             }
-            TokenCacheHolder.renewal(token, 30, TimeUnit.MINUTES);
+            throw new AuthException("用户登录失效，请重新登录");
         }
     }
 
@@ -83,6 +86,14 @@ public class AuthInterceptor implements HandlerInterceptor {
                 // TODO 用户权限校验 不通过则抛出AuthException终止程序
             }
         }
+    }
+
+    private String getAuthToken(HttpServletRequest request) {
+        String token = request.getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
+        if (token == null || token.length() < 8 || !"bearer".equalsIgnoreCase(token.substring(0, 6))) {
+            return null;
+        }
+        return token.substring(7);
     }
 
     @Override

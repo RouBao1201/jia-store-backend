@@ -22,6 +22,8 @@ public class TokenCacheHolder {
 
     public static final String TOKEN_HEADER_KEY = "Authorization";
 
+    public static final String BEARER_HEADER = "Bearer ";
+
     /**
      * 生成token并缓存
      *
@@ -77,6 +79,6 @@ public class TokenCacheHolder {
      * @return 是否成功
      */
     public static boolean renewal(String token, long time, TimeUnit timeUnit) {
-        return RedisHelper.expire(token, time, timeUnit);
+        return RedisHelper.expire(RedisKey.PREFIX_USER_TOKEN + token, time, timeUnit);
     }
 }
