@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 分页查询基础实体
@@ -29,4 +30,23 @@ public class PageReqDto implements Serializable {
     @Schema(name = "pageSize", description = "每页数量", example = "20")
     @NotNull(message = "每页数量不可为空")
     private Integer pageSize;
+
+    @Schema(name = "fieldsOrderBy", description = "排序字段（格式：字段名 [ASC/DESC]）", example = "id ASC")
+    private List<String> fieldsOrderBy;
+
+    /**
+     * 组装排序字段
+     *
+     * @return 排序字段
+     */
+    public String assembleOrderBySql() {
+        if (fieldsOrderBy != null && !fieldsOrderBy.isEmpty()) {
+            StringBuilder orderByStr = new StringBuilder();
+            fieldsOrderBy.forEach(it -> {
+                orderByStr.append(it).append(",");
+            });
+            return orderByStr.toString();
+        }
+        return "";
+    }
 }

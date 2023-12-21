@@ -100,6 +100,15 @@ create table dict_config
     update_time datetime default CURRENT_TIMESTAMP not null comment '修改时间',
     unique (dict_key, label, value)
 ) comment '字典配置表';
+INSERT INTO dict_config (id, dict_key, label, value, create_time, update_time)
+VALUES (12, 'GENDER', '男', '1', '2023-12-20 13:07:55', '2023-12-20 13:07:55');
+INSERT INTO dict_config (id, dict_key, label, value, create_time, update_time)
+VALUES (13, 'GENDER', '女', '0', '2023-12-20 13:07:55', '2023-12-20 13:07:55');
+INSERT INTO dict_config (id, dict_key, label, value, create_time, update_time)
+VALUES (14, 'STATUS', '启动', '1', '2023-12-21 11:41:50', '2023-12-21 11:41:50');
+INSERT INTO dict_config (id, dict_key, label, value, create_time, update_time)
+VALUES (15, 'STATUS', '停用', '0', '2023-12-21 11:42:05', '2023-12-21 11:42:05');
+
 
 
 drop table if exists menu;
