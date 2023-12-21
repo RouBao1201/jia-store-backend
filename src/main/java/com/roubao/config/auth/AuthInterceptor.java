@@ -37,7 +37,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             // token校验
             this.checkToken(request, (HandlerMethod) handler);
             // 校验用户权限
-            this.checkAccess((HandlerMethod) handler);
+            this.checkApiAccess((HandlerMethod) handler);
         }
         return true;
     }
@@ -59,40 +59,27 @@ public class AuthInterceptor implements HandlerInterceptor {
         DisableToken disableToken = handler.getMethod().getAnnotation(DisableToken.class);
         if (disableToken == null) {
             // 校验token合法性
-            String token = this.getAuthToken(request);
+            String token = TokenCacheHolder.getToken(request);
             if (token != null) {
                 Integer userId = RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, Integer.class);
                 if (ObjUtil.isEmpty(userId)) {
                     throw new AuthException("用户登录失效，请重新登录");
                 }
                 TokenCacheHolder.renewalToken(token, 30, TimeUnit.MINUTES);
+            } else {
+                throw new AuthException("用户未登录授权，请先登录");
             }
-            throw new AuthException("用户登录失效，请重新登录");
         }
     }
 
     /**
      * 校验用户接口访问权限
      */
-    private void checkAccess(HandlerMethod handler) {
+    private void checkApiAccess(HandlerMethod handler) {
         ApiAccess checkAccessAnno = handler.getMethod().getAnnotation(ApiAccess.class);
         if (checkAccessAnno != null) {
-            String[] value = checkAccessAnno.value();
-            if (value.length == 0) {
-            } else {
-//                UserService userServiceBean = SpringContextHolder.getBean(UserService.class);
-//                CurrentUserDto currentUser = userServiceBean.getCurrentUser();
-                // TODO 用户权限校验 不通过则抛出AuthException终止程序
-            }
+            // TODO 接口权限校验
         }
-    }
-
-    private String getAuthToken(HttpServletRequest request) {
-        String token = request.getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
-        if (token == null || token.length() < 8 || !"bearer".equalsIgnoreCase(token.substring(0, 6))) {
-            return null;
-        }
-        return token.substring(7);
     }
 
     @Override

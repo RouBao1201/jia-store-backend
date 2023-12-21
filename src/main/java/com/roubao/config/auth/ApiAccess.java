@@ -7,15 +7,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 权限绑定注解
+ * 接口访问权限注解
  *
  * @author SongYanBin
  */
-@Target({
-        ElementType.METHOD
-})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ApiAccess {
-    String[] value() default {};
+    /**
+     * 权限KEY
+     */
+    String[] authKey() default {};
+
+    /**
+     * 权限类型
+     */
+    String authType() default "";
 }

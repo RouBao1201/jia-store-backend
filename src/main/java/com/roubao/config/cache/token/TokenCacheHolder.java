@@ -4,6 +4,7 @@ import com.roubao.common.constants.RedisKey;
 import com.roubao.helper.RedisHelper;
 import com.roubao.util.MD5Utils;
 import com.roubao.util.SessionUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -43,7 +44,10 @@ public class TokenCacheHolder {
      * @return 用户ID
      */
     public static Integer getCurrentUserId() {
-        String token = SessionUtils.getRequest().getHeader(TOKEN_HEADER_KEY);
+        String token = getToken();
+        if (token == null) {
+            return null;
+        }
         return RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, Integer.class);
     }
 
@@ -54,7 +58,10 @@ public class TokenCacheHolder {
      * @return 是否成功
      */
     public static boolean cleanCurrentUserCache() {
-        String token = SessionUtils.getRequest().getHeader(TOKEN_HEADER_KEY);
+        String token = getToken();
+        if (token == null) {
+            return false;
+        }
         return RedisHelper.delete(RedisKey.PREFIX_USER_TOKEN + token);
     }
 
@@ -65,7 +72,10 @@ public class TokenCacheHolder {
      * @return 是否当前登录用户
      */
     public static boolean isCurrentLoginUser(Integer userId) {
-        String token = SessionUtils.getRequest().getHeader(TOKEN_HEADER_KEY);
+        String token = getToken();
+        if (token == null) {
+            return false;
+        }
         Integer cacheUserId = RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, Integer.class);
         return Objects.equals(userId, cacheUserId);
     }
@@ -80,5 +90,23 @@ public class TokenCacheHolder {
      */
     public static boolean renewalToken(String token, long time, TimeUnit timeUnit) {
         return RedisHelper.expire(RedisKey.PREFIX_USER_TOKEN + token, time, timeUnit);
+    }
+
+    /**
+     * 获取请求Token
+     *
+     * @param request 请求
+     * @return token
+     */
+    public static String getToken(HttpServletRequest... request) {
+        HttpServletRequest requestRes = SessionUtils.getRequest();
+        if (request != null && request.length > 0) {
+            requestRes = request[0];
+        }
+        String token = requestRes.getHeader(TokenCacheHolder.TOKEN_HEADER_KEY);
+        if (token == null || token.length() < 8 || !"bearer".equalsIgnoreCase(token.substring(0, 6))) {
+            return null;
+        }
+        return token.substring(7);
     }
 }
