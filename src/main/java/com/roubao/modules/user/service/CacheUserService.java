@@ -8,7 +8,7 @@ import com.roubao.modules.user.dto.CurrentUserDto;
  * @author: SongYanBin
  * @date: 2023-12-11
  */
-public interface UserCacheService {
+public interface CacheUserService {
 
     /**
      * 根据id获取用户信息

@@ -12,7 +12,7 @@ import com.roubao.modules.user.dto.UserInfoDto;
 import com.roubao.modules.user.dto.UserRoleDto;
 import com.roubao.modules.user.mapper.UserInfoMapper;
 import com.roubao.modules.user.mapper.UserMapper;
-import com.roubao.modules.user.service.UserCacheService;
+import com.roubao.modules.user.service.CacheUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -32,7 +32,7 @@ import java.util.List;
 @Slf4j
 @Service
 @CacheConfig(cacheNames = "user")
-public class UserCacheServiceImpl implements UserCacheService {
+public class CacheUserServiceImpl implements CacheUserService {
     private static final String CURRENT_USER_CACHE_PREFIX = "user:currentUser:";
 
     @Autowired

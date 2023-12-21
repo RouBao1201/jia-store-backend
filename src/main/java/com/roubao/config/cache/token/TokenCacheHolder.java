@@ -43,8 +43,8 @@ public class TokenCacheHolder {
      * @param token token
      * @return 用户ID
      */
-    public static Integer getCurrentUserId() {
-        String token = getToken();
+    public static Integer getCurrentUserId(HttpServletRequest... request) {
+        String token = getToken(request);
         if (token == null) {
             return null;
         }
@@ -57,8 +57,8 @@ public class TokenCacheHolder {
      * @param token token
      * @return 是否成功
      */
-    public static boolean cleanCurrentUserCache() {
-        String token = getToken();
+    public static boolean cleanCurrentUserCache(HttpServletRequest... request) {
+        String token = getToken(request);
         if (token == null) {
             return false;
         }
@@ -71,8 +71,8 @@ public class TokenCacheHolder {
      * @param userId 用户ID
      * @return 是否当前登录用户
      */
-    public static boolean isCurrentLoginUser(Integer userId) {
-        String token = getToken();
+    public static boolean isCurrentLoginUser(Integer userId, HttpServletRequest... request) {
+        String token = getToken(request);
         if (token == null) {
             return false;
         }

@@ -7,6 +7,7 @@ import com.roubao.modules.user.dto.PersonalSettingsReqDto;
 import com.roubao.modules.user.dto.RegisterReqDto;
 import com.roubao.modules.user.dto.ReviseReqDto;
 import com.roubao.modules.user.dto.SmsCodeSendReqDto;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 用户业务接口
@@ -51,14 +52,14 @@ public interface UserService {
      *
      * @return 注销是否成功
      */
-    void logout();
+    void logout(HttpServletRequest request);
 
     /**
      * 获取当前用户
      *
      * @return 当前用户信息
      */
-    CurrentUserDto getCurrentUser();
+    CurrentUserDto getCurrentUser(HttpServletRequest... request);
 
     /**
      * 短信验证码发送

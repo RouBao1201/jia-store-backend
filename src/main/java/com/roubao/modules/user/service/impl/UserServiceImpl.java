@@ -21,10 +21,11 @@ import com.roubao.modules.user.dto.SmsCodeSendReqDto;
 import com.roubao.modules.user.dto.UserInfoDto;
 import com.roubao.modules.user.mapper.UserInfoMapper;
 import com.roubao.modules.user.mapper.UserMapper;
-import com.roubao.modules.user.service.UserCacheService;
+import com.roubao.modules.user.service.CacheUserService;
 import com.roubao.modules.user.service.UserService;
 import com.roubao.util.EitherUtils;
 import com.roubao.util.MD5Utils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private UserCacheService userCacheService;
+    private CacheUserService cacheUserService;
 
     @Autowired
     private UserInfoMapper userInfoMapper;
@@ -162,20 +163,20 @@ public class UserServiceImpl implements UserService {
         userInfo.setUpdateTime(new Date());
         userInfoMapper.update(userInfo, userInfoUpdateWrapper);
         // 清理用户缓存信息
-        userCacheService.invalidateUserCache(user.getId());
+        cacheUserService.invalidateUserCache(user.getId());
     }
 
     @Override
-    public void logout() {
-        userCacheService.invalidateUserCache(TokenCacheHolder.getCurrentUserId());
-        TokenCacheHolder.cleanCurrentUserCache();
+    public void logout(HttpServletRequest request) {
+        cacheUserService.invalidateUserCache(TokenCacheHolder.getCurrentUserId(request));
+        TokenCacheHolder.cleanCurrentUserCache(request);
     }
 
     @Override
-    public CurrentUserDto getCurrentUser() {
-        Integer currentUserId = TokenCacheHolder.getCurrentUserId();
+    public CurrentUserDto getCurrentUser(HttpServletRequest... request) {
+        Integer currentUserId = TokenCacheHolder.getCurrentUserId(request);
         EitherUtils.throwIfNull(currentUserId, ErrorCode.AUTH_ERROR, "用户登录状态已失效！");
-        CurrentUserDto user = userCacheService.getUserById(currentUserId);
+        CurrentUserDto user = cacheUserService.getUserById(currentUserId);
         EitherUtils.throwIfNull(user, ErrorCode.AUTH_ERROR, "用户不存在！");
         return user;
     }
