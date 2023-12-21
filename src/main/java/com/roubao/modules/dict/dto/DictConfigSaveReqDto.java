@@ -20,7 +20,7 @@ import java.util.List;
 @Schema(name = "字典配置新增请求体", description = "字典配置新增请求体")
 @Data
 @ToString
-public class DictConfigCreateReqDto implements Serializable {
+public class DictConfigSaveReqDto implements Serializable {
 
 
     @Serial

@@ -1,4 +1,4 @@
-package com.roubao.utils;
+package com.roubao.util;
 
 import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  * @since 2023/12/17
  **/
 @Slf4j
-public class PageUtil {
+public class PageUtils {
 
     /**
      * 分页查询
@@ -161,9 +161,9 @@ public class PageUtil {
          */
         public <T extends PageReqDto, R> PageList<R> doStart(T reqDto, ISelect select, Class<R> clazz) {
             if (this.conditionResult) {
-                return PageUtil.doStart(reqDto, select, clazz);
+                return PageUtils.doStart(reqDto, select, clazz);
             } else {
-                return PageUtil.doEmpty(reqDto, clazz);
+                return PageUtils.doEmpty(reqDto, clazz);
             }
         }
 
@@ -181,11 +181,11 @@ public class PageUtil {
         public <T extends PageReqDto, R> PageList<R> doStartAfter(T reqDto, ISelect select, Class<R> clazz,
                                                                   Consumer<List<R>> consumer) {
             if (this.conditionResult) {
-                PageList<R> pageResult = PageUtil.doStart(reqDto, select, clazz);
+                PageList<R> pageResult = PageUtils.doStart(reqDto, select, clazz);
                 consumer.accept(pageResult.getList());
                 return pageResult;
             } else {
-                return PageUtil.doEmpty(reqDto, clazz);
+                return PageUtils.doEmpty(reqDto, clazz);
             }
         }
     }

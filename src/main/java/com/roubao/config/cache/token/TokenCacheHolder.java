@@ -2,8 +2,8 @@ package com.roubao.config.cache.token;
 
 import com.roubao.common.constants.RedisKey;
 import com.roubao.helper.RedisHelper;
-import com.roubao.utils.MD5Util;
-import com.roubao.utils.SessionUtil;
+import com.roubao.util.MD5Utils;
+import com.roubao.util.SessionUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class TokenCacheHolder {
      * @return token
      */
     public static String generateTokenAndCache(Integer userId) {
-        String token = MD5Util.encrypt(System.currentTimeMillis() + userId + new Random().nextInt() + "");
+        String token = MD5Utils.encrypt(System.currentTimeMillis() + userId + new Random().nextInt() + "");
         RedisHelper.set(RedisKey.PREFIX_USER_TOKEN + token, userId, 30, TimeUnit.MINUTES);
         return token;
     }
@@ -43,7 +43,7 @@ public class TokenCacheHolder {
      * @return 用户ID
      */
     public static Integer getCurrentUserId() {
-        String token = SessionUtil.getRequest().getHeader(TOKEN_HEADER_KEY);
+        String token = SessionUtils.getRequest().getHeader(TOKEN_HEADER_KEY);
         return RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, Integer.class);
     }
 
@@ -54,7 +54,7 @@ public class TokenCacheHolder {
      * @return 是否成功
      */
     public static boolean cleanCurrentUserCache() {
-        String token = SessionUtil.getRequest().getHeader(TOKEN_HEADER_KEY);
+        String token = SessionUtils.getRequest().getHeader(TOKEN_HEADER_KEY);
         return RedisHelper.delete(RedisKey.PREFIX_USER_TOKEN + token);
     }
 
@@ -65,7 +65,7 @@ public class TokenCacheHolder {
      * @return 是否当前登录用户
      */
     public static boolean isCurrentLoginUser(Integer userId) {
-        String token = SessionUtil.getRequest().getHeader(TOKEN_HEADER_KEY);
+        String token = SessionUtils.getRequest().getHeader(TOKEN_HEADER_KEY);
         Integer cacheUserId = RedisHelper.get(RedisKey.PREFIX_USER_TOKEN + token, Integer.class);
         return Objects.equals(userId, cacheUserId);
     }
@@ -78,7 +78,7 @@ public class TokenCacheHolder {
      * @param timeUnit 时间单位
      * @return 是否成功
      */
-    public static boolean renewal(String token, long time, TimeUnit timeUnit) {
+    public static boolean renewalToken(String token, long time, TimeUnit timeUnit) {
         return RedisHelper.expire(RedisKey.PREFIX_USER_TOKEN + token, time, timeUnit);
     }
 }

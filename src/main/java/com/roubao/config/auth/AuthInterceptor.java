@@ -1,13 +1,12 @@
 package com.roubao.config.auth;
 
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.StrUtil;
 import com.roubao.common.constants.RedisKey;
 import com.roubao.config.cache.token.TokenCacheHolder;
 import com.roubao.config.exception.AuthException;
 import com.roubao.config.superadmin.SuperAdmin;
 import com.roubao.helper.RedisHelper;
-import com.roubao.utils.SpringContextHolder;
+import com.roubao.util.SpringContextHolder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +65,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 if (ObjUtil.isEmpty(userId)) {
                     throw new AuthException("用户登录失效，请重新登录");
                 }
-                TokenCacheHolder.renewal(token, 30, TimeUnit.MINUTES);
+                TokenCacheHolder.renewalToken(token, 30, TimeUnit.MINUTES);
             }
             throw new AuthException("用户登录失效，请重新登录");
         }

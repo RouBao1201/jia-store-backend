@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roubao.modules.dict.mapper.DictConfigMapper">
-    <select id="selectPageDictConfig" resultType="com.roubao.domain.DictConfigPO">
+    <select id="listPageDictConfig" resultType="com.roubao.domain.DictConfigPO">
         SELECT id, dict_key, label, value
         FROM dict_config
         WHERE 1 = 1
@@ -19,7 +19,7 @@
         ORDER BY id
     </select>
 
-    <select id="selectListByUniques" resultType="com.roubao.domain.DictConfigPO">
+    <select id="listDictConfigByUniques" resultType="com.roubao.domain.DictConfigPO">
         SELECT id, dict_key, label, value
         FROM dict_config
         WHERE dict_key = #{reqDto.dictKey}

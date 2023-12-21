@@ -1,4 +1,4 @@
-package com.roubao.utils;
+package com.roubao.util;
 
 import com.roubao.config.exception.BaseRuntimeException;
 
@@ -8,7 +8,7 @@ import com.roubao.config.exception.BaseRuntimeException;
  * @author: SongYanBin
  * @date: 2023-12-18
  */
-public class EitherUtil {
+public class EitherUtils {
     /**
      * 对象为空则抛出异常
      *
@@ -105,7 +105,7 @@ public class EitherUtil {
         void doIf(Runnable trueHandle);
     }
 
-    private EitherUtil() {
+    private EitherUtils() {
 
     }
 }

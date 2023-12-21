@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Schema(name = "字典配置删除请求体", description = "字典配置删除请求体")
 @Data
 @ToString
-public class DictConfigDeleteReqDto implements Serializable {
+public class DictConfigRemoveReqDto implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 845488841661194046L;

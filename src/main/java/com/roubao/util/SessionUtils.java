@@ -1,4 +1,4 @@
-package com.roubao.utils;
+package com.roubao.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -16,7 +16,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @since 2023/6/15
  **/
 @Slf4j
-public class SessionUtil {
+public class SessionUtils {
     /**
      * 获取HttpSession
      *

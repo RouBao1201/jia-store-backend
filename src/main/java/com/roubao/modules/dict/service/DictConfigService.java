@@ -2,12 +2,10 @@ package com.roubao.modules.dict.service;
 
 import com.roubao.common.response.PageList;
 import com.roubao.domain.DictConfigPO;
-import com.roubao.modules.dict.dto.DictConfigCreateReqDto;
-import com.roubao.modules.dict.dto.DictConfigDeleteReqDto;
+import com.roubao.modules.dict.dto.DictConfigSaveReqDto;
+import com.roubao.modules.dict.dto.DictConfigRemoveReqDto;
 import com.roubao.modules.dict.dto.DictConfigPageQueryReqDto;
 import com.roubao.modules.dict.dto.DictConfigUpdateReqDto;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -25,7 +23,7 @@ public interface DictConfigService {
      * @param key 字典KEY
      * @return 字典配置
      */
-    List<DictConfigPO> getDictConfigByKey(String key);
+    List<DictConfigPO> listDictConfigByKey(String key);
 
     /**
      * 分页查询字典配置数据
@@ -33,14 +31,14 @@ public interface DictConfigService {
      * @param reqDto 请求体
      * @return 分页数据
      */
-    PageList<DictConfigPO> getPageList(DictConfigPageQueryReqDto reqDto);
+    PageList<DictConfigPO> listPage(DictConfigPageQueryReqDto reqDto);
 
     /**
      * 新增字典配置
      *
      * @param reqDto 请求体
      */
-    void createDictConfig(DictConfigCreateReqDto reqDto);
+    void saveDictConfig(DictConfigSaveReqDto reqDto);
 
     /**
      * 修改字典配置
@@ -54,5 +52,5 @@ public interface DictConfigService {
      *
      * @param reqDto 请求体
      */
-    void deleteDictConfig(DictConfigDeleteReqDto reqDto);
+    void removeDictConfig(DictConfigRemoveReqDto reqDto);
 }

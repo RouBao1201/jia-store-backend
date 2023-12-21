@@ -5,15 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.roubao.common.response.PageList;
 import com.roubao.config.exception.ParameterCheckException;
 import com.roubao.domain.DictConfigPO;
-import com.roubao.modules.dict.dto.DictConfigCreateReqDto;
-import com.roubao.modules.dict.dto.DictConfigDeleteReqDto;
+import com.roubao.modules.dict.dto.DictConfigSaveReqDto;
+import com.roubao.modules.dict.dto.DictConfigRemoveReqDto;
 import com.roubao.modules.dict.dto.DictConfigPageQueryReqDto;
 import com.roubao.modules.dict.dto.DictConfigUpdateReqDto;
 import com.roubao.modules.dict.dto.DictPairReqDto;
 import com.roubao.modules.dict.mapper.DictConfigMapper;
 import com.roubao.modules.dict.service.DictConfigService;
-import com.roubao.utils.EitherUtil;
-import com.roubao.utils.PageUtil;
+import com.roubao.util.EitherUtils;
+import com.roubao.util.PageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,22 +35,22 @@ public class DictConfigServiceImpl implements DictConfigService {
     private DictConfigMapper dictConfigMapper;
 
     @Override
-    public List<DictConfigPO> getDictConfigByKey(String key) {
+    public List<DictConfigPO> listDictConfigByKey(String key) {
         LambdaQueryWrapper<DictConfigPO> dictConfigQueryWrapper = new LambdaQueryWrapper<>();
         dictConfigQueryWrapper.eq(DictConfigPO::getDictKey, key);
         return dictConfigMapper.selectList(dictConfigQueryWrapper);
     }
 
     @Override
-    public PageList<DictConfigPO> getPageList(DictConfigPageQueryReqDto reqDto) {
-        return PageUtil.doStart(reqDto, () -> dictConfigMapper.selectPageDictConfig(reqDto), DictConfigPO.class);
+    public PageList<DictConfigPO> listPage(DictConfigPageQueryReqDto reqDto) {
+        return PageUtils.doStart(reqDto, () -> dictConfigMapper.listPageDictConfig(reqDto), DictConfigPO.class);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createDictConfig(DictConfigCreateReqDto reqDto) {
-        List<DictConfigPO> exitsUniques = dictConfigMapper.selectListByUniques(reqDto);
-        EitherUtil.boolE(CollUtil.isNotEmpty(exitsUniques)).either(() -> {
+    public void saveDictConfig(DictConfigSaveReqDto reqDto) {
+        List<DictConfigPO> exitsUniques = dictConfigMapper.listDictConfigByUniques(reqDto);
+        EitherUtils.boolE(CollUtil.isNotEmpty(exitsUniques)).either(() -> {
             throw new ParameterCheckException(String.format("已存在相同的字典配置: [%s - %s]", exitsUniques.get(0).getLabel(), exitsUniques.get(0).getValue()));
         }, () -> {
             // 数据正常就几条无需批量执行
@@ -75,7 +75,7 @@ public class DictConfigServiceImpl implements DictConfigService {
         dictConfigQueryWrapper.eq(DictConfigPO::getLabel, reqDto.getLabel());
         dictConfigQueryWrapper.eq(DictConfigPO::getValue, reqDto.getValue());
         boolean exists = dictConfigMapper.exists(dictConfigQueryWrapper);
-        EitherUtil.boolE(exists).either(() -> {
+        EitherUtils.boolE(exists).either(() -> {
             throw new RuntimeException("配置已存在");
         }, () -> {
             DictConfigPO po = new DictConfigPO();
@@ -89,7 +89,7 @@ public class DictConfigServiceImpl implements DictConfigService {
     }
 
     @Override
-    public void deleteDictConfig(DictConfigDeleteReqDto reqDto) {
+    public void removeDictConfig(DictConfigRemoveReqDto reqDto) {
         dictConfigMapper.deleteById(reqDto.getId());
     }
 }

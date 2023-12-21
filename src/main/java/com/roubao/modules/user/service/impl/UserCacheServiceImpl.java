@@ -67,7 +67,7 @@ public class UserCacheServiceImpl implements UserCacheService {
         currentUserDto.setUserInfo(userInfoDto);
 
         // 用户权限
-        List<AuthorityPO> authorityList = userMapper.queryUserAuthority(userId);
+        List<AuthorityPO> authorityList = userMapper.listUserAuthority(userId);
         List<UserAuthorityDto> userAuthList = new ArrayList<>();
         if (CollUtil.isNotEmpty(authorityList)) {
             authorityList.forEach(it -> {
@@ -79,7 +79,7 @@ public class UserCacheServiceImpl implements UserCacheService {
         currentUserDto.setUserAuth(userAuthList);
 
         // 用户角色
-        List<RolePO> roleList = userMapper.queryUserRole(userId);
+        List<RolePO> roleList = userMapper.listUserRole(userId);
         List<UserRoleDto> userRoleList = new ArrayList<>();
         if (CollUtil.isNotEmpty(roleList)) {
             roleList.forEach(it -> {

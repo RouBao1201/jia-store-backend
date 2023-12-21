@@ -1,4 +1,4 @@
-package com.roubao.utils;
+package com.roubao.util;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
  * @since 2023/4/5
  **/
 @Slf4j
-public class MD5Util {
+public class MD5Utils {
     private static final String MESSAGE_DIGEST = "MD5";
 
     private static final String DEFAULT_SALT = "Jia-Store-Key";
@@ -104,6 +104,6 @@ public class MD5Util {
         return new String(resultCharArray);
     }
 
-    private MD5Util() {
+    private MD5Utils() {
     }
 }
