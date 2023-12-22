@@ -145,14 +145,26 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void personalSettings(PersonalSettingsReqDto reqDto) {
-        LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
-        userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
-        UserPO user = userMapper.selectOne(userQueryWrapper);
+        UserPO user = userMapper.selectById(reqDto.getId());
         EitherUtils.throwIfNull(user, ErrorCode.PARAM_ERROR, "用户名不存在！");
 
         // 校验修改的是否为当前登陆人自己的信息
         boolean currentLoginUser = TokenCacheHolder.isCurrentLoginUser(user.getId());
-        EitherUtils.throwIf(!currentLoginUser, ErrorCode.PARAM_ERROR, "不允许修改他人用户信息！");
+        EitherUtils.throwIf(!currentLoginUser, ErrorCode.PARAM_ERROR, "当前修改的并非登陆人信息！");
+
+        // 校验邮箱是否存在
+        LambdaQueryWrapper<UserInfoPO> userInfoQueryWrapper = new LambdaQueryWrapper<>();
+        userInfoQueryWrapper.eq(UserInfoPO::getUserId, reqDto.getId());
+        UserInfoPO userInfoPo = userInfoMapper.selectOne(userInfoQueryWrapper);
+        // 不相等说明用户修改了邮箱
+        if (!StrUtil.equals(reqDto.getEmail(), userInfoPo.getEmail())) {
+            LambdaQueryWrapper<UserInfoPO> wrapper = new LambdaQueryWrapper<>();
+            userInfoQueryWrapper.eq(UserInfoPO::getEmail, reqDto.getEmail());
+            boolean emailExisted = userInfoMapper.exists(wrapper);
+            EitherUtils.throwIf(emailExisted, ErrorCode.PARAM_ERROR, "当前邮箱已被注册！");
+        }
+        String cacheSmsCode = RedisHelper.get(RedisKey.PREFIX_USER_SMS_CODE + reqDto.getUsername(), String.class);
+        EitherUtils.throwIf(!StrUtil.equals(reqDto.getSmsCode(), cacheSmsCode), ErrorCode.PARAM_ERROR, "验证码不正确！");
 
         // 修改用户信息
         LambdaUpdateWrapper<UserInfoPO> userInfoUpdateWrapper = new LambdaUpdateWrapper<>();
@@ -161,9 +173,11 @@ public class UserServiceImpl implements UserService {
         userInfo.setNickname(reqDto.getNickname());
         userInfo.setGender(reqDto.getGender());
         userInfo.setUpdateTime(new Date());
+        userInfo.setEmail(reqDto.getEmail());
         userInfoMapper.update(userInfo, userInfoUpdateWrapper);
         // 清理用户缓存信息
         cacheUserService.invalidateUserCache(user.getId());
+        RedisHelper.delete(RedisKey.PREFIX_USER_SMS_CODE + reqDto.getUsername());
     }
 
     @Override
@@ -185,7 +199,7 @@ public class UserServiceImpl implements UserService {
     public void sendSmsCode(SmsCodeSendReqDto reqDto) {
         String email = reqDto.getEmail();
         // 若是修改密码则需要验证用户名
-        if (reqDto.getEmail() == null) {
+        if (email == null) {
             UserInfoDto userInfoDto = userInfoMapper.getUserInfoByUsername(reqDto.getUsername());
             EitherUtils.throwIfNull(userInfoDto, ErrorCode.PARAM_ERROR, "用户名不存在！");
             email = userInfoDto.getEmail();

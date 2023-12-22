@@ -14,7 +14,7 @@ public class ApiAccessException extends BaseRuntimeException {
 
     @Override
     public int getCode() {
-        return 40101;
+        return 403;
     }
 
     public ApiAccessException() {

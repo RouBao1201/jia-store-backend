@@ -51,12 +51,12 @@ public class CacheUserServiceImpl implements CacheUserService {
             return null;
         }
         CurrentUserDto currentUserDto = new CurrentUserDto();
+        currentUserDto.setSuperAdmin(userMapper.isSuperAdmin(userId) != null);
         // 用户信息
         UserInfoDto userInfoDto = new UserInfoDto();
         userInfoDto.setId(userId);
         userInfoDto.setStatus(user.getStatus());
         userInfoDto.setUsername(user.getUserName());
-        userInfoDto.setSuperAdmin(userMapper.isSuperAdmin(userId) != null);
         UserInfoPO userInfo = userInfoMapper.selectById(userId);
         if (userInfo != null) {
             userInfoDto.setGender(userInfo.getGender());

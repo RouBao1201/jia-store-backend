@@ -3,6 +3,7 @@ package com.roubao.modules.user.dto;
 import com.roubao.common.validators.ExistIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 
@@ -22,9 +23,21 @@ public class PersonalSettingsReqDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1264095329488043275L;
 
+    @Schema(name = "id", description = "用户ID", example = "1")
+    @NotNull(message = "用户ID不可为空")
+    private Integer id;
+
     @Schema(name = "nickname", description = "昵称", example = "admin")
     @NotBlank(message = "昵称不可为空")
     private String nickname;
+
+    @Schema(name = "email", description = "邮箱", example = "62414****@qq.com")
+    @NotBlank(message = "邮箱不可为空")
+    private String email;
+
+    @Schema(name = "smsCode", description = "验证码", example = "123456")
+    @NotBlank(message = "验证码不可为空")
+    private String smsCode;
 
     @Schema(name = "username", description = "用户名", example = "admin")
     @NotBlank(message = "用户名不可为空")

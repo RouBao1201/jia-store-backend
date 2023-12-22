@@ -22,6 +22,9 @@ public class CurrentUserDto implements Serializable {
     @Serial
     private static final long serialVersionUID = -9176014559421190930L;
 
+    @Schema(name = "superAdmin", description = "用户是否为超级管理员")
+    private boolean superAdmin;
+
     @Schema(name = "userInfo", description = "用户信息")
     private UserInfoDto userInfo;
 

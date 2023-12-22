@@ -26,9 +26,6 @@ public class UserInfoDto implements Serializable {
     @Schema(name = "username", description = "用户状态")
     private Integer status;
 
-    @Schema(name = "superAdmin", description = "用户是否为超级管理员")
-    private boolean superAdmin;
-
     @Schema(name = "nickname", description = "用户昵称")
     private String nickname;
 

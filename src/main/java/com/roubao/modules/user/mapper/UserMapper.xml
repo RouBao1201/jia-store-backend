@@ -13,6 +13,7 @@
           AND u.status = 1
           AND r.status = 1 LIMIT 1
     </select>
+
     <select id="listUserAuthority" resultType="com.roubao.domain.AuthorityPO" parameterType="java.lang.Integer">
         SELECT a.id, a.auth_key, a.name, a.type, a.status
         FROM user u
@@ -20,6 +21,8 @@
                  JOIN role_authority ra ON ra.role_id = ur.role_id
                  JOIN authority a ON a.id = ra.authority_id
         WHERE u.id = #{userId}
+          AND u.status = 1
+          AND a.status = 1
         UNION ALL
         SELECT a.id, a.auth_key, a.name, a.type, a.status
         FROM user u
@@ -27,7 +30,10 @@
                  JOIN menu_authority ma ON ma.menu_id = um.menu_id
                  JOIN authority a ON a.id = ma.authority_id
         WHERE u.id = #{userId}
+          AND u.status = 1
+          AND a.status = 1
     </select>
+
     <select id="listUserRole" resultType="com.roubao.domain.RolePO" parameterType="java.lang.Integer">
         SELECT r.id, r.name, r.status, r.create_time, r.update_time
         FROM user u
