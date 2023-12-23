@@ -18,10 +18,10 @@ import java.util.Date;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/12/10
  **/
-@TableName("authority")
+@TableName("permission")
 @Data
 @ToString
-public class AuthorityPO implements Serializable {
+public class PermissionPO implements Serializable {
     @Serial
     private static final long serialVersionUID = 8028989078975000753L;
 
@@ -49,6 +49,9 @@ public class AuthorityPO implements Serializable {
     @TableField("name")
     private String name;
 
+    /**
+     * 类型
+     */
     @TableField("type")
     private String type;
 

@@ -1,7 +1,7 @@
 package com.roubao.modules.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.roubao.domain.AuthorityPO;
+import com.roubao.domain.PermissionPO;
 import com.roubao.domain.RolePO;
 import com.roubao.domain.UserPO;
 import org.apache.ibatis.annotations.Mapper;
@@ -32,7 +32,7 @@ public interface UserMapper extends BaseMapper<UserPO> {
      * @param userId 用户ID
      * @return 用户权限集合
      */
-    List<AuthorityPO> listUserAuthority(Integer userId);
+    List<PermissionPO> listUserPermission(Integer userId);
 
     /**
      * 查询用户所有角色

@@ -2,7 +2,7 @@ package com.roubao.modules.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import com.roubao.domain.AuthorityPO;
+import com.roubao.domain.PermissionPO;
 import com.roubao.domain.RolePO;
 import com.roubao.domain.UserInfoPO;
 import com.roubao.domain.UserPO;
@@ -67,7 +67,7 @@ public class CacheUserServiceImpl implements CacheUserService {
         currentUserDto.setUserInfo(userInfoDto);
 
         // 用户权限
-        List<AuthorityPO> authorityList = userMapper.listUserAuthority(userId);
+        List<PermissionPO> authorityList = userMapper.listUserPermission(userId);
         List<UserAuthorityDto> userAuthList = new ArrayList<>();
         if (CollUtil.isNotEmpty(authorityList)) {
             authorityList.forEach(it -> {

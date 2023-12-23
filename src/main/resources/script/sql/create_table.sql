@@ -12,6 +12,9 @@ create table user
     constraint unique_username
         unique (username)
 ) comment '用户表';
+INSERT INTO user (id, username, password, status, create_time, update_time)
+VALUES (1, 'admin', '297b738b4495bb9ea1972ed24db31ab9', 1, now(), now());
+
 
 
 drop table if exists user_info;
@@ -30,8 +33,6 @@ INSERT INTO jiastore.user_info (user_id, nickname, avatar, gender, email, create
 VALUES (1, '管理员',
         'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2F4d40b566-1f0a-4f8d-bc97-c513df8775b3%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1705040920&t=51a54bcb01c5fb4f3974ecb714e7f0bb',
         1, '624142800@qq.com', '2023-12-13 14:29:24', '2023-12-13 14:29:24');
-
-
 
 
 
