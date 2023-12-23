@@ -7,12 +7,14 @@ import com.roubao.domain.RolePO;
 import com.roubao.domain.UserInfoPO;
 import com.roubao.domain.UserPO;
 import com.roubao.modules.user.dto.CurrentUserDto;
-import com.roubao.modules.user.dto.UserAuthorityDto;
+import com.roubao.modules.user.dto.UserPermissionDto;
 import com.roubao.modules.user.dto.UserInfoDto;
 import com.roubao.modules.user.dto.UserRoleDto;
+import com.roubao.modules.user.mapper.PermissionMapper;
 import com.roubao.modules.user.mapper.UserInfoMapper;
 import com.roubao.modules.user.mapper.UserMapper;
 import com.roubao.modules.user.service.CacheUserService;
+import com.roubao.util.EitherUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -42,16 +44,55 @@ public class CacheUserServiceImpl implements CacheUserService {
     @Autowired
     private UserInfoMapper userInfoMapper;
 
+    @Autowired
+    private PermissionMapper permissionMapper;
+
     @Override
     @Cacheable(key = "'" + CURRENT_USER_CACHE_PREFIX + "'" + "+ #userId", unless = "#result == null")
     public CurrentUserDto getUserById(Integer userId) {
-        // TODO 取值逻辑以及SQL后续优化调整
         UserPO user = userMapper.selectById(userId);
         if (user == null) {
             return null;
         }
         CurrentUserDto currentUserDto = new CurrentUserDto();
-        currentUserDto.setSuperAdmin(userMapper.isSuperAdmin(userId) != null);
+        List<UserPermissionDto> userAuthList = new ArrayList<>();
+        Integer superAdmin = userMapper.isSuperAdmin(userId);
+        EitherUtils.boolE(superAdmin != null).either(() -> {
+            currentUserDto.setSuperAdmin(true);
+            // 超级管理员获取所有权限
+            List<PermissionPO> permissionList = permissionMapper.listPermissionByStatus(null);
+            if (CollUtil.isNotEmpty(permissionList)) {
+                permissionList.forEach(it -> {
+                    UserPermissionDto dto = new UserPermissionDto();
+                    BeanUtil.copyProperties(it, dto);
+                    userAuthList.add(dto);
+                });
+            }
+        }, () -> {
+            currentUserDto.setSuperAdmin(false);
+            // 用户权限
+            List<PermissionPO> permissionList = userMapper.listUserPermission(userId);
+            if (CollUtil.isNotEmpty(permissionList)) {
+                permissionList.forEach(it -> {
+                    UserPermissionDto dto = new UserPermissionDto();
+                    BeanUtil.copyProperties(it, dto);
+                    userAuthList.add(dto);
+                });
+            }
+            // 用户角色
+            List<RolePO> roleList = userMapper.listUserRole(userId);
+            List<UserRoleDto> userRoleList = new ArrayList<>();
+            if (CollUtil.isNotEmpty(roleList)) {
+                roleList.forEach(it -> {
+                    UserRoleDto dto = new UserRoleDto();
+                    BeanUtil.copyProperties(it, dto);
+                    userRoleList.add(dto);
+                });
+            }
+            currentUserDto.setUserRole(userRoleList);
+        });
+        currentUserDto.setUserAuth(userAuthList);
+
         // 用户信息
         UserInfoDto userInfoDto = new UserInfoDto();
         userInfoDto.setId(userId);
@@ -65,30 +106,6 @@ public class CacheUserServiceImpl implements CacheUserService {
             userInfoDto.setEmail(userInfo.getEmail());
         }
         currentUserDto.setUserInfo(userInfoDto);
-
-        // 用户权限
-        List<PermissionPO> authorityList = userMapper.listUserPermission(userId);
-        List<UserAuthorityDto> userAuthList = new ArrayList<>();
-        if (CollUtil.isNotEmpty(authorityList)) {
-            authorityList.forEach(it -> {
-                UserAuthorityDto dto = new UserAuthorityDto();
-                BeanUtil.copyProperties(it, dto);
-                userAuthList.add(dto);
-            });
-        }
-        currentUserDto.setUserAuth(userAuthList);
-
-        // 用户角色
-        List<RolePO> roleList = userMapper.listUserRole(userId);
-        List<UserRoleDto> userRoleList = new ArrayList<>();
-        if (CollUtil.isNotEmpty(roleList)) {
-            roleList.forEach(it -> {
-                UserRoleDto dto = new UserRoleDto();
-                BeanUtil.copyProperties(it, dto);
-                userRoleList.add(dto);
-            });
-        }
-        currentUserDto.setUserRole(userRoleList);
         return currentUserDto;
     }
 

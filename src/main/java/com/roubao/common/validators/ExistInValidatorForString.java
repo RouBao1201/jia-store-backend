@@ -22,11 +22,11 @@ public class ExistInValidatorForString implements ConstraintValidator<ExistIn, S
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
-        if (strRange == null || strRange.length == 0) {
+        if (strRange == null || strRange.length == 0 || value == null) {
             return false;
         } else {
             for (String s : strRange) {
-                if (value != null && value.equals(s)) {
+                if (value.equals(s)) {
                     return true;
                 }
             }

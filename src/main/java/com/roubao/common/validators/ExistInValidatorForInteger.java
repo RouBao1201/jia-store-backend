@@ -22,11 +22,11 @@ public class ExistInValidatorForInteger implements ConstraintValidator<ExistIn, 
 
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext constraintValidatorContext) {
-        if (intRange == null || intRange.length == 0) {
+        if (intRange == null || intRange.length == 0 || value == null) {
             return false;
         } else {
             for (int i : intRange) {
-                if (value != null && value.equals(i)) {
+                if (value.equals(i)) {
                     return true;
                 }
             }

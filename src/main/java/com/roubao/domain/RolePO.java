@@ -33,7 +33,6 @@ public class RolePO implements Serializable {
      * 主键ID
      */
     @TableId(value = "id", type = IdType.AUTO)
-    @TableField("id")
     private Integer id;
 
     /**

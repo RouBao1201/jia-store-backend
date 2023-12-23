@@ -29,7 +29,7 @@ public class CurrentUserDto implements Serializable {
     private UserInfoDto userInfo;
 
     @Schema(name = "userAuth", description = "用户权限")
-    private List<UserAuthorityDto> userAuth;
+    private List<UserPermissionDto> userAuth;
 
     @Schema(name = "userRole", description = "用户角色")
     private List<UserRoleDto> userRole;

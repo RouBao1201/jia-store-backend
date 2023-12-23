@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Schema(name = "用户权限实体", description = "用户权限实体")
 @Data
 @ToString
-public class UserAuthorityDto implements Serializable {
+public class UserPermissionDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 3164631629192342031L;
 
