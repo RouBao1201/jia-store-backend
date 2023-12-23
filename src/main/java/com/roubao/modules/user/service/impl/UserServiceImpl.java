@@ -1,11 +1,13 @@
 package com.roubao.modules.user.service.impl;
 
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.roubao.common.constants.ErrorCode;
 import com.roubao.common.constants.RedisKey;
+import com.roubao.config.asserts.Assert;
 import com.roubao.config.cache.token.TokenCacheHolder;
 import com.roubao.domain.UserInfoPO;
 import com.roubao.domain.UserPO;
@@ -62,9 +64,9 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<UserPO> userQueryWrapper = new LambdaQueryWrapper<>();
         userQueryWrapper.eq(UserPO::getUserName, reqDto.getUsername());
         userQueryWrapper.eq(UserPO::getPassword, MD5Utils.encrypt(reqDto.getPassword()));
-        userQueryWrapper.eq(UserPO::getStatus, 1);
         UserPO userPo = userMapper.selectOne(userQueryWrapper);
         EitherUtils.throwIfNull(userPo, ErrorCode.PARAM_ERROR, "用户名或密码错误！");
+        Assert.AUTH_ERROR.throwIf(ObjUtil.notEqual(userPo.getStatus(), UserPO.STATUS_ENABLED), "用户名已失效，请联系管理员！");
         LoginRespDto loginRespDto = new LoginRespDto();
         String token = TokenCacheHolder.generateTokenAndCache(userPo.getId());
         loginRespDto.setToken(token);

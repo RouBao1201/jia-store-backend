@@ -9,6 +9,8 @@ package com.roubao.config.asserts;
  **/
 public enum Assert implements AssertPerformerExceptionHandler {
     PARAMETER_ERROR(400, "参数错误"),
+
+    AUTH_ERROR(403, "权限异常"),
     ;
 
     private final Integer code;

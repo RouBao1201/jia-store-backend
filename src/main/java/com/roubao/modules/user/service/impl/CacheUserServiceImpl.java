@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 用户业务实现（带缓存）
@@ -51,7 +52,7 @@ public class CacheUserServiceImpl implements CacheUserService {
     @Cacheable(key = "'" + CURRENT_USER_CACHE_PREFIX + "'" + "+ #userId", unless = "#result == null")
     public CurrentUserDto getUserById(Integer userId) {
         UserPO user = userMapper.selectById(userId);
-        if (user == null) {
+        if (user == null || !Objects.equals(user.getStatus(), UserPO.STATUS_ENABLED)) {
             return null;
         }
         CurrentUserDto currentUserDto = new CurrentUserDto();
