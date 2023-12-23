@@ -1,5 +1,7 @@
-package com.roubao.config.auth;
+package com.roubao.config.web;
 
+import com.roubao.config.auth.AuthInterceptor;
+import com.roubao.config.auth.AuthInterceptorProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -14,11 +16,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  **/
 @Configuration
 @EnableConfigurationProperties(AuthInterceptorProperties.class)
-public class AuthWebConfiguration implements WebMvcConfigurer {
+public class WebConfigurer implements WebMvcConfigurer {
 
     private final AuthInterceptorProperties authInterceptorProperties;
 
-    public AuthWebConfiguration(AuthInterceptorProperties authInterceptorProperties) {
+    public WebConfigurer(AuthInterceptorProperties authInterceptorProperties) {
         this.authInterceptorProperties = authInterceptorProperties;
     }
 
@@ -29,5 +31,6 @@ public class AuthWebConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(new AuthInterceptor())
                 .addPathPatterns(authInterceptorProperties.getInterceptPatterns())
                 .excludePathPatterns(authInterceptorProperties.getExcludePatterns());
+
     }
 }
