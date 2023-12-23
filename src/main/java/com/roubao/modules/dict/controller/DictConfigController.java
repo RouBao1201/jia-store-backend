@@ -1,5 +1,6 @@
 package com.roubao.modules.dict.controller;
 
+import cn.hutool.core.lang.Assert;
 import com.roubao.common.response.PageResult;
 import com.roubao.common.response.RespResult;
 import com.roubao.domain.DictConfigPO;

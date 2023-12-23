@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/12/8
  **/
-//@EnableSuperAdminOnline
+@EnableSuperAdminOnline
 @EnableCaching
 @EnableTransactionManagement
 @MapperScan("com.roubao.modules.**.mapper")

@@ -1,6 +1,7 @@
 package com.roubao.config.exception;
 
 import com.roubao.common.response.RespResult;
+import com.roubao.config.asserts.AssertException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,17 +34,35 @@ public class GlobalExceptionHandler {
      * 参数异常处理@Validated全局
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public RespResult<Object> handleConstraintViolationException(ConstraintViolationException ex) {
+    public RespResult<Object> handleConstraintViolationExceptionHandler(ConstraintViolationException ex) {
         return RespResult.error(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
     /**
-     * 基础异常处理
+     * 断言异常
+     */
+    @ExceptionHandler(AssertException.class)
+    public RespResult<Object> assertExceptionHandler(AssertException ex) {
+        log.error("GlobalExceptionHandler ==> AssertException: {}", ex.getMessage(), ex);
+        return RespResult.error(ex.getCode(), ex.getMessage());
+    }
+
+    /**
+     * 基础运行异常处理
      */
     @ExceptionHandler(BaseRuntimeException.class)
-    public RespResult<Object> baseRuntimeException(BaseRuntimeException ex) {
+    public RespResult<Object> baseRuntimeExceptionHandler(BaseRuntimeException ex) {
         log.error("GlobalExceptionHandler ==> BaseRuntimeException: {}", ex.getMessage(), ex);
         return RespResult.error(ex.getCode(), ex.getMessage());
+    }
+
+    /**
+     * 运行时异常
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public RespResult<Object> runtimeExceptionHandler(RuntimeException ex) {
+        log.error("GlobalExceptionHandler ==> RuntimeException: {}", ex.getMessage(), ex);
+        return RespResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙: " + ex.getMessage());
     }
 
     /**
