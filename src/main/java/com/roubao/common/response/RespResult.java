@@ -1,7 +1,6 @@
 package com.roubao.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.roubao.config.trace.MDCTraceUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -69,7 +68,7 @@ public class RespResult<T> implements Serializable {
      */
     @Schema(name = "traceId", description = "链路ID")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String traceId = MDCTraceUtils.getTraceId();
+    private String traceId;
 
     public RespResult(Integer code, String msg, T data) {
         this.code = code;

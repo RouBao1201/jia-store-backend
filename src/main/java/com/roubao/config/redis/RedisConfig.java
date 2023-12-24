@@ -30,8 +30,7 @@ public class RedisConfig {
         // String的序列化方式
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         // 使用Jackson2JsonRedisSerialize 替换默认序列化(默认采用的是JDK序列化)
-        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(
-                Object.class);
+        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
         // key序列化方式采用String类型
         template.setKeySerializer(stringRedisSerializer);
         // value序列化方式采用jackson类型

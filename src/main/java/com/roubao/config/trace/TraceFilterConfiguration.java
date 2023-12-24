@@ -14,19 +14,24 @@ import org.springframework.core.Ordered;
 @Slf4j
 public class TraceFilterConfiguration {
 
+    @Bean("webTraceFilter")
+    public WebTraceFilter webTraceFilter() {
+        return new WebTraceFilter();
+    }
+
     @Bean
-    public FilterRegistrationBean<WebTraceFilter> webTraceFilter() {
+    public FilterRegistrationBean<WebTraceFilter> filterRegistrationBean(WebTraceFilter webTraceFilter) {
         log.info("TraceFilterConfiguration ==> Init WebTraceFilter.");
         //1.创建FilterRegistrationBean这个对象, 一个过滤器注册器,注册一个过滤器
         FilterRegistrationBean<WebTraceFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         //注册一个过滤器
-        filterRegistrationBean.setFilter(new WebTraceFilter());
+        filterRegistrationBean.setFilter(webTraceFilter);
         //过滤器的配置, 设置拦截的url
         filterRegistrationBean.addUrlPatterns("/*");
         //给过滤器起名字
-        filterRegistrationBean.setName("WebTraceFilter");
+        filterRegistrationBean.setName("WebTraceFilterRegistrationBean");
         //设置过滤器的执行顺序
-        filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+        filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 3);
         return filterRegistrationBean;
     }
 }

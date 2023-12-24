@@ -1,5 +1,6 @@
 package com.roubao;
 
+import com.roubao.config.superadmin.EnableSuperAdminOnline;
 import com.roubao.config.trace.EnableLinkTracing;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -18,8 +19,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @MapperScan("com.roubao.modules.**.mapper")
 @SpringBootApplication
-//@EnableLinkTracing
-//@EnableSuperAdminOnline
+@EnableLinkTracing
+@EnableSuperAdminOnline
 public class JiaStoreApplication {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(JiaStoreApplication.class);
