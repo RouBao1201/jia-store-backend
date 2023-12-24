@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan("com.roubao.modules.**.mapper")
 @SpringBootApplication
 @EnableLinkTracing
-@EnableSuperAdminOnline
+//@EnableSuperAdminOnline
 public class JiaStoreApplication {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(JiaStoreApplication.class);

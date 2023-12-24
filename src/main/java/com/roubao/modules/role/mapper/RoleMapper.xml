@@ -7,7 +7,16 @@
             resultType="com.roubao.domain.RolePO">
         SELECT id, name, status
         FROM role WHERE 1 = 1
-        <if test="name != null and name != ''">AND name LIKE CONCAT('%', #{name}, '%') </if>
-        <if test="status != null">AND status = #{status} </if>
+        <if test="name != null and name != ''">AND name LIKE CONCAT('%', #{name}, '%')</if>
+        <if test="status != null">AND status = #{status}</if>
+        ORDER BY id ASC
+    </select>
+
+    <select id="listRolePermission" parameterType="java.lang.Integer" resultType="com.roubao.domain.PermissionPO">
+        SELECT p.id, p.name, p.auth_key, p.type
+        FROM role r
+                 JOIN role_permission rp ON r.id = rp.role_id AND r.status = 1
+                 JOIN permission p ON rp.permission_id = p.id AND p.status = 1
+        WHERE r.id = #{roleId}
     </select>
 </mapper>

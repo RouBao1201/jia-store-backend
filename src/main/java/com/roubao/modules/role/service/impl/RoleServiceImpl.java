@@ -1,6 +1,8 @@
 package com.roubao.modules.role.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.roubao.common.response.PageList;
+import com.roubao.domain.PermissionPO;
 import com.roubao.domain.RolePO;
 import com.roubao.modules.role.dto.RoleChangedStatusReqDto;
 import com.roubao.modules.role.dto.RolePageQueryReqDto;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 角色业务接口实现
@@ -51,5 +54,17 @@ public class RoleServiceImpl implements RoleService {
         po.setCreateTime(new Date());
         po.setUpdateTime(new Date());
         roleMapper.insert(po);
+    }
+
+    @Override
+    public List<RolePO> listAllRole() {
+        LambdaQueryWrapper<RolePO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RolePO::getStatus, RolePO.STATUS_ENABLED);
+        return roleMapper.selectList(wrapper);
+    }
+
+    @Override
+    public List<PermissionPO> listRolePermission(Integer roleId) {
+        return roleMapper.listRolePermission(roleId);
     }
 }
