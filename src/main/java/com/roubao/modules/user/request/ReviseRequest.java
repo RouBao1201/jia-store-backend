@@ -1,5 +1,6 @@
 package com.roubao.modules.user.request;
 
+import com.roubao.common.request.BaseRequest;
 import com.roubao.common.validators.ExistIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 账户密码修改请求实体
@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Schema(name = "账户密码修改请求实体", description = "账户密码修改请求实体")
 @Data
 @ToString
-public class ReviseRequest implements Serializable {
+public class ReviseRequest extends BaseRequest {
     @Serial
     private static final long serialVersionUID = 1935922855720594869L;
 

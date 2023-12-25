@@ -1,12 +1,12 @@
 package com.roubao.modules.role.request;
 
+import com.roubao.common.request.BaseRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 角色状态修改请求实体
@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Schema(name = "角色状态修改请求实体", description = "角色状态修改请求实体")
 @Data
 @ToString
-public class RoleChangedStatusRequest implements Serializable {
+public class RoleChangedStatusRequest extends BaseRequest {
 
     @Serial
     private static final long serialVersionUID = -6860978568461922775L;

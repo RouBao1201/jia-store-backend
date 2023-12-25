@@ -1,12 +1,12 @@
 package com.roubao.modules.dict.request;
 
+import com.roubao.common.request.BaseRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 字典键值对请求体
@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Schema(name = "字典键值对请求体", description = "字典键值对请求体")
 @Data
 @ToString
-public class DictPairRequest implements Serializable {
+public class DictPairRequest extends BaseRequest {
     @Serial
     private static final long serialVersionUID = -1499010125559482744L;
 

@@ -1,5 +1,6 @@
 package com.roubao.modules.role.request;
 
+import com.roubao.common.request.BaseRequest;
 import com.roubao.common.validators.ExistIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 角色新增请求实体
@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Schema(name = "角色新增请求实体", description = "角色新增请求实体")
 @Data
 @ToString
-public class RoleSaveRequest implements Serializable {
+public class RoleSaveRequest extends BaseRequest {
     @Serial
     private static final long serialVersionUID = -876801038838898761L;
 

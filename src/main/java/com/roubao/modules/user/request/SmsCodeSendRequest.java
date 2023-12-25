@@ -1,12 +1,12 @@
 package com.roubao.modules.user.request;
 
+import com.roubao.common.request.BaseRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 短信发送请求实体
@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Schema(name = "短信发送请求实体", description = "短信发送请求实体")
 @Data
 @ToString
-public class SmsCodeSendRequest implements Serializable {
+public class SmsCodeSendRequest extends BaseRequest {
     @Serial
     private static final long serialVersionUID = -5484032560123984172L;
 

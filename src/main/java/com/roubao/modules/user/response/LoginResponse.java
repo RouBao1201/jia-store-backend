@@ -1,11 +1,11 @@
 package com.roubao.modules.user.response;
 
+import com.roubao.common.reponse.BaseResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 登录响应实体
@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Schema(name = "用户登录响应实体", description = "用户登录响应实体")
 @Data
 @ToString
-public class LoginResponse implements Serializable {
+public class LoginResponse extends BaseResponse {
     @Serial
     private static final long serialVersionUID = -4636356007042837482L;
 

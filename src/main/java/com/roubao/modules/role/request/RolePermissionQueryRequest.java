@@ -1,12 +1,12 @@
 package com.roubao.modules.role.request;
 
+import com.roubao.common.request.BaseRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 角色权限查询请求实体
@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Schema(name = "角色权限查询请求实体", description = "角色权限查询请求实体")
 @Data
 @ToString
-public class RolePermissionQueryRequest implements Serializable {
+public class RolePermissionQueryRequest extends BaseRequest {
     @Serial
     private static final long serialVersionUID = 7079016817939936907L;
 

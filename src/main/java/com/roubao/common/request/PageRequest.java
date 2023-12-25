@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ import java.util.List;
 @Schema(name = "分页查询基础实体", description = "分页查询基础实体")
 @Data
 @ToString
-public class PageRequest implements Serializable {
+public class PageRequest extends BaseRequest {
     @Serial
     private static final long serialVersionUID = -9064747065930831304L;
 

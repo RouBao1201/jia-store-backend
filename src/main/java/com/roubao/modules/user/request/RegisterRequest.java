@@ -1,12 +1,12 @@
 package com.roubao.modules.user.request;
 
+import com.roubao.common.request.BaseRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 用户注册请求实体
@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Schema(name = "用户注册请求实体", description = "用户注册请求实体")
 @Data
 @ToString
-public class RegisterRequest implements Serializable {
+public class RegisterRequest extends BaseRequest {
     @Serial
     private static final long serialVersionUID = -9118776122854492640L;
 

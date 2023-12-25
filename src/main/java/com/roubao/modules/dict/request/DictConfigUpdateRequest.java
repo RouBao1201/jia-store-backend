@@ -1,5 +1,6 @@
 package com.roubao.modules.dict.request;
 
+import com.roubao.common.request.BaseRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 字典配置修改请求体
@@ -18,8 +18,7 @@ import java.io.Serializable;
 @Schema(name = "字典配置修改请求体", description = "字典配置修改请求体")
 @Data
 @ToString
-public class DictConfigUpdateRequest implements Serializable {
-
+public class DictConfigUpdateRequest extends BaseRequest {
 
     @Serial
     private static final long serialVersionUID = 5919532938642980398L;
