@@ -17,9 +17,9 @@ public class AssertException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = -5645312404551073039L;
 
-    private final Integer code;
+    private final String code;
 
-    public AssertException(Integer code, String message) {
+    public AssertException(String code, String message) {
         super(message);
         this.code = code;
     }

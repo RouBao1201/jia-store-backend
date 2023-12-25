@@ -11,7 +11,7 @@ create table role
         unique (name)
 ) comment '角色表';
 INSERT INTO role (id, name, status, create_time, update_time)
-VALUES (0, 'SuperAdmin', 1, now(), now());
+VALUES (0, '超级管理员', 1, now(), now());
 
 
 
@@ -27,6 +27,9 @@ create table user_role
     constraint unique_user_id_role_id
         unique (user_id, role_id)
 ) comment '用户角色表';
+INSERT INTO user_role (id, user_id, role_id, create_time, update_time)
+VALUES (1, 1, 0, now(), now());
+
 
 drop table if exists role_permission;
 create table role_permission

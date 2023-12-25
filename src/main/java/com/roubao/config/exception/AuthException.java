@@ -1,6 +1,6 @@
 package com.roubao.config.exception;
 
-import org.springframework.http.HttpStatus;
+import com.roubao.common.constants.RespCodeEnum;
 
 import java.io.Serial;
 
@@ -16,8 +16,8 @@ public class AuthException extends BaseRuntimeException {
     private static final long serialVersionUID = -2801956111099369186L;
 
     @Override
-    public int getCode() {
-        return HttpStatus.UNAUTHORIZED.value();
+    public String getCode() {
+        return RespCodeEnum.UNAUTHORIZED_ERROR.getCode();
     }
 
     public AuthException() {

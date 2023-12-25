@@ -4,8 +4,8 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.roubao.common.constants.ErrorCode;
 import com.roubao.common.constants.RedisKey;
+import com.roubao.common.constants.RespCodeEnum;
 import com.roubao.config.asserts.Assert;
 import com.roubao.config.cache.token.TokenCacheHolder;
 import com.roubao.domain.UserDO;
@@ -62,8 +62,8 @@ public class UserServiceImpl implements UserService {
         userQueryWrapper.eq(UserDO::getUserName, request.getUsername());
         userQueryWrapper.eq(UserDO::getPassword, MD5Utils.encrypt(request.getPassword()));
         UserDO userPo = userMapper.selectOne(userQueryWrapper);
-        EitherUtils.throwIfNull(userPo, ErrorCode.PARAM_ERROR, "用户名或密码错误！");
-        Assert.AUTH_ERROR.throwIf(ObjUtil.notEqual(userPo.getStatus(), UserDO.STATUS_ENABLED), "用户名已失效，请联系管理员！");
+        EitherUtils.throwIfNull(userPo, RespCodeEnum.PARAMETER_ERROR.getCode(), "用户名或密码错误！");
+        Assert.FORBIDDEN_ERROR.throwIf(ObjUtil.notEqual(userPo.getStatus(), UserDO.STATUS_ENABLED), "用户名已失效，请联系管理员！");
         LoginResponse loginRespDto = new LoginResponse();
         String token = TokenCacheHolder.generateTokenAndCache(userPo.getId());
         loginRespDto.setToken(token);
@@ -76,17 +76,17 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<UserDO> userQueryWrapper = new LambdaQueryWrapper<>();
         userQueryWrapper.eq(UserDO::getUserName, request.getUsername());
         UserDO userRes = userMapper.selectOne(userQueryWrapper);
-        EitherUtils.throwIfNotNull(userRes, ErrorCode.PARAM_ERROR, "用户名已存在！");
+        EitherUtils.throwIfNotNull(userRes, RespCodeEnum.PARAMETER_ERROR.getCode(), "用户名已存在！");
 
         // 校验邮箱是否重复
         LambdaQueryWrapper<UserInfoDO> userInfoQueryWrapper = new LambdaQueryWrapper<>();
         userInfoQueryWrapper.eq(UserInfoDO::getEmail, request.getEmail());
         UserInfoDO userInfoRes = userInfoMapper.selectOne(userInfoQueryWrapper);
-        EitherUtils.throwIfNotNull(userInfoRes, ErrorCode.PARAM_ERROR, "该邮箱已存在注册账户！");
+        EitherUtils.throwIfNotNull(userInfoRes, RespCodeEnum.PARAMETER_ERROR.getCode(), "该邮箱已存在注册账户！");
 
         // 校验验证码是否正确
         String cacheSmsCode = RedisHelper.get(RedisKey.PREFIX_USER_SMS_CODE + request.getUsername(), String.class);
-        EitherUtils.throwIf(!StrUtil.equals(cacheSmsCode, request.getSmsCode()), ErrorCode.PARAM_ERROR, "验证码错误或过期！");
+        EitherUtils.throwIf(!StrUtil.equals(cacheSmsCode, request.getSmsCode()), RespCodeEnum.PARAMETER_ERROR.getCode(), "验证码错误或过期！");
 
         // 新增用户
         UserDO userPo = new UserDO();
@@ -110,21 +110,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void revisePassword(ReviseRequest request) {
-        EitherUtils.throwIf(!Objects.equals(request.getNewPassword(), request.getCheckPassword()), ErrorCode.PARAM_ERROR, "两次密码不一致！");
+        EitherUtils.throwIf(!Objects.equals(request.getNewPassword(), request.getCheckPassword()), RespCodeEnum.PARAMETER_ERROR.getCode(), "两次密码不一致！");
         LambdaQueryWrapper<UserDO> userQueryWrapper = new LambdaQueryWrapper<>();
         // 输入旧密码方式修改密码
         if (ReviseRequest.TYPE_OLD_PASSWORD.equals(request.getType())) {
-            EitherUtils.throwIf(StrUtil.isBlank(request.getOldPassword()), ErrorCode.PARAM_ERROR, "旧密码不可为空！");
+            EitherUtils.throwIf(StrUtil.isBlank(request.getOldPassword()), RespCodeEnum.PARAMETER_ERROR.getCode(), "旧密码不可为空！");
             userQueryWrapper.eq(UserDO::getPassword, MD5Utils.encrypt(request.getOldPassword()));
         }
         userQueryWrapper.eq(UserDO::getUserName, request.getUsername());
         UserDO user = userMapper.selectOne(userQueryWrapper);
-        EitherUtils.throwIfNull(user, ErrorCode.PARAM_ERROR, "用户名或密码错误！");
+        EitherUtils.throwIfNull(user, RespCodeEnum.PARAMETER_ERROR.getCode(), "用户名或密码错误！");
 
         // 短信方式修改密码
         if (ReviseRequest.TYPE_SMS_CODE.equals(request.getType())) {
             String cacheSmsCode = userManager.getEmailCode(request.getUsername());
-            EitherUtils.throwIf(!StrUtil.equals(request.getSmsCode(), cacheSmsCode), ErrorCode.PARAM_ERROR, "验证码错误或过期！");
+            EitherUtils.throwIf(!StrUtil.equals(request.getSmsCode(), cacheSmsCode), RespCodeEnum.PARAMETER_ERROR.getCode(), "验证码错误或过期！");
             RedisHelper.delete(RedisKey.PREFIX_USER_SMS_CODE + request.getUsername());
         }
 
@@ -135,11 +135,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void personalSettings(PersonalSettingsRequest request) {
         UserDO user = userMapper.selectById(request.getId());
-        EitherUtils.throwIfNull(user, ErrorCode.PARAM_ERROR, "用户名不存在！");
+        EitherUtils.throwIfNull(user, RespCodeEnum.PARAMETER_ERROR.getCode(), "用户名不存在！");
 
         // 校验修改的是否为当前登陆人自己的信息
         boolean currentLoginUser = TokenCacheHolder.isCurrentLoginUser(user.getId());
-        EitherUtils.throwIf(!currentLoginUser, ErrorCode.PARAM_ERROR, "当前修改的并非登陆人信息！");
+        EitherUtils.throwIf(!currentLoginUser, RespCodeEnum.PARAMETER_ERROR.getCode(), "当前修改的并非登陆人信息！");
 
         // 校验邮箱是否存在
         LambdaQueryWrapper<UserInfoDO> userInfoQueryWrapper = new LambdaQueryWrapper<>();
@@ -150,10 +150,10 @@ public class UserServiceImpl implements UserService {
             LambdaQueryWrapper<UserInfoDO> wrapper = new LambdaQueryWrapper<>();
             userInfoQueryWrapper.eq(UserInfoDO::getEmail, request.getEmail());
             boolean emailExisted = userInfoMapper.exists(wrapper);
-            EitherUtils.throwIf(emailExisted, ErrorCode.PARAM_ERROR, "当前邮箱已被注册！");
+            EitherUtils.throwIf(emailExisted, RespCodeEnum.PARAMETER_ERROR.getCode(), "当前邮箱已被注册！");
         }
         String cacheSmsCode = RedisHelper.get(RedisKey.PREFIX_USER_SMS_CODE + request.getUsername(), String.class);
-        EitherUtils.throwIf(!StrUtil.equals(request.getSmsCode(), cacheSmsCode), ErrorCode.PARAM_ERROR, "验证码不正确！");
+        EitherUtils.throwIf(!StrUtil.equals(request.getSmsCode(), cacheSmsCode), RespCodeEnum.PARAMETER_ERROR.getCode(), "验证码不正确！");
 
         // 清理用户缓存信息
         RedisHelper.delete(RedisKey.PREFIX_USER_SMS_CODE + request.getUsername());
@@ -170,16 +170,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout(HttpServletRequest httpServletRequest) {
-        TokenCacheHolder.cleanCurrentUserCache(httpServletRequest);
         userManager.invalidateUserCache(TokenCacheHolder.getCurrentUserId(httpServletRequest));
+        TokenCacheHolder.cleanCurrentUserCache(httpServletRequest);
     }
 
     @Override
     public CurrentUserDto getCurrentUser(HttpServletRequest... httpServletRequests) {
         Integer currentUserId = TokenCacheHolder.getCurrentUserId(httpServletRequests);
-        EitherUtils.throwIfNull(currentUserId, ErrorCode.AUTH_ERROR, "用户登录状态已失效！");
+        EitherUtils.throwIfNull(currentUserId, RespCodeEnum.FORBIDDEN_ERROR.getCode(), "用户登录状态已失效！");
         CurrentUserDto user = userManager.getUserById(currentUserId);
-        EitherUtils.throwIfNull(user, ErrorCode.AUTH_ERROR, "用户不存在！");
+        EitherUtils.throwIfNull(user, RespCodeEnum.FORBIDDEN_ERROR.getCode(), "用户不存在！");
         return user;
     }
 
@@ -189,7 +189,7 @@ public class UserServiceImpl implements UserService {
         // 若是修改密码则需要验证用户名
         if (email == null) {
             UserInfoDto userInfoDto = userInfoMapper.getUserInfoByUsername(request.getUsername());
-            EitherUtils.throwIfNull(userInfoDto, ErrorCode.PARAM_ERROR, "用户名不存在！");
+            EitherUtils.throwIfNull(userInfoDto, RespCodeEnum.PARAMETER_ERROR.getCode(), "用户名不存在！");
             email = userInfoDto.getEmail();
         }
         userManager.sendEmailCode(email, request.getUsername());

@@ -19,5 +19,5 @@ public interface PermissionMapper {
      *
      * @return 权限列表
      */
-    List<PermissionDO> listPermissionByStatus(Integer status);
+    List<PermissionDO> listPermissionsByStatus(Integer status);
 }

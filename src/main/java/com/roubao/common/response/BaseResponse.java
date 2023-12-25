@@ -1,4 +1,4 @@
-package com.roubao.common.reponse;
+package com.roubao.common.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

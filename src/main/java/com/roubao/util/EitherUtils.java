@@ -16,7 +16,7 @@ public class EitherUtils {
      * @param errorCode 错误编码
      * @param errorMsg  错误信息
      */
-    public static void throwIfNull(Object obj, int errorCode, String errorMsg) {
+    public static void throwIfNull(Object obj, String errorCode, String errorMsg) {
         throwIf(obj == null, errorCode, errorMsg);
     }
 
@@ -27,7 +27,7 @@ public class EitherUtils {
      * @param errorCode 错误编码
      * @param errorMsg  错误信息
      */
-    public static void throwIfNotNull(Object obj, int errorCode, String errorMsg) {
+    public static void throwIfNotNull(Object obj, String errorCode, String errorMsg) {
         throwIf(obj != null, errorCode, errorMsg);
     }
 
@@ -38,7 +38,7 @@ public class EitherUtils {
      * @param errorCode 错误编码
      * @param errorMsg  错误信息
      */
-    public static void throwIf(boolean condition, int errorCode, String errorMsg) {
+    public static void throwIf(boolean condition, String errorCode, String errorMsg) {
         boolT(condition).doIf(() -> {
             throw new BaseRuntimeException(errorCode, errorMsg);
         });

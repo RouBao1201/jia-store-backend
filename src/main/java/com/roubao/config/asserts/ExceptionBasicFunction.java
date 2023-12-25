@@ -11,7 +11,7 @@ public interface ExceptionBasicFunction {
     /**
      * 获取异常码
      */
-    Integer getCode();
+    String getCode();
 
     /**
      * 获取异常信息

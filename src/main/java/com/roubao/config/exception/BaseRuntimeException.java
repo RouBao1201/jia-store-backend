@@ -1,6 +1,6 @@
 package com.roubao.config.exception;
 
-import org.springframework.http.HttpStatus;
+import com.roubao.common.constants.RespCodeEnum;
 
 import java.io.Serial;
 
@@ -14,9 +14,9 @@ public class BaseRuntimeException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = -4569556263785675784L;
 
-    private int code = HttpStatus.INTERNAL_SERVER_ERROR.value();
+    private String code = RespCodeEnum.INTERNAL_SERVER_ERROR.getCode();
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -31,7 +31,7 @@ public class BaseRuntimeException extends RuntimeException {
     public BaseRuntimeException() {
     }
 
-    public BaseRuntimeException(Integer code, String message) {
+    public BaseRuntimeException(String code, String message) {
         super(message);
         this.code = code;
     }

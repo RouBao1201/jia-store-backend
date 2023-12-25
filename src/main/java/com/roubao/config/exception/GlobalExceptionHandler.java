@@ -1,5 +1,6 @@
 package com.roubao.config.exception;
 
+import com.roubao.common.constants.RespCodeEnum;
 import com.roubao.common.response.RespResult;
 import com.roubao.config.asserts.AssertException;
 import jakarta.validation.ConstraintViolationException;
@@ -28,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public RespResult<Object> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
         ObjectError objectError = ex.getBindingResult().getAllErrors().get(0);
-        return RespResult.error(HttpStatus.BAD_REQUEST.value(), objectError.getDefaultMessage());
+        return RespResult.failure(RespCodeEnum.PARAMETER_ERROR.getCode(), objectError.getDefaultMessage());
     }
 
     /**
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public RespResult<Object> handleConstraintViolationExceptionHandler(ConstraintViolationException ex) {
-        return RespResult.error(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return RespResult.failure(RespCodeEnum.PARAMETER_ERROR.getCode(), ex.getMessage());
     }
 
     /**
@@ -45,7 +46,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AssertException.class)
     public RespResult<Object> assertExceptionHandler(AssertException ex) {
         logger.warn("GlobalExceptionHandler ==> AssertException: {}", ex.getMessage(), ex);
-        return RespResult.error(ex.getCode(), ex.getMessage());
+        return RespResult.failure(ex.getCode(), ex.getMessage());
     }
 
     /**
@@ -54,7 +55,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BaseRuntimeException.class)
     public RespResult<Object> baseRuntimeExceptionHandler(BaseRuntimeException ex) {
         logger.error("GlobalExceptionHandler ==> BaseRuntimeException: {}", ex.getMessage(), ex);
-        return RespResult.error(ex.getCode(), ex.getMessage());
+        return RespResult.failure(ex.getCode(), ex.getMessage());
     }
 
     /**
@@ -63,7 +64,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public RespResult<Object> runtimeExceptionHandler(RuntimeException ex) {
         logger.error("GlobalExceptionHandler ==> RuntimeException: {}", ex.getMessage(), ex);
-        return RespResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙: " + ex.getMessage());
+        return RespResult.failure(HttpStatus.INTERNAL_SERVER_ERROR, RespCodeEnum.INTERNAL_SERVER_ERROR.getCode(), "服务器繁忙: " + ex.getMessage());
     }
 
     /**
@@ -72,6 +73,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public RespResult<Object> exceptionHandler(Exception ex) {
         logger.error("GlobalExceptionHandler ==> Exception: {}", ex.getMessage(), ex);
-        return RespResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙: " + ex.getMessage());
+        return RespResult.failure(HttpStatus.INTERNAL_SERVER_ERROR, RespCodeEnum.INTERNAL_SERVER_ERROR.getCode(), "服务器繁忙: " + ex.getMessage());
     }
 }

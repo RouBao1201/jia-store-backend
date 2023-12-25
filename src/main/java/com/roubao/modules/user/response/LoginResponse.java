@@ -1,6 +1,6 @@
 package com.roubao.modules.user.response;
 
-import com.roubao.common.reponse.BaseResponse;
+import com.roubao.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.ToString;

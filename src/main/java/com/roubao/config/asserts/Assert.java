@@ -1,5 +1,7 @@
 package com.roubao.config.asserts;
 
+import com.roubao.common.constants.RespCodeEnum;
+
 /**
  * 断言工具枚举
  *
@@ -8,22 +10,24 @@ package com.roubao.config.asserts;
  * @since 2023/12/23
  **/
 public enum Assert implements AssertPerformerExceptionHandler {
-    PARAMETER_ERROR(400, "参数错误"),
+    PARAMETER_ERROR(RespCodeEnum.PARAMETER_ERROR.getCode(), "参数错误"),
 
-    AUTH_ERROR(403, "权限异常"),
+    UNAUTHORIZED_ERROR(RespCodeEnum.UNAUTHORIZED_ERROR.getCode(), "权限不足"),
+
+    FORBIDDEN_ERROR(RespCodeEnum.FORBIDDEN_ERROR.getCode(), "禁止访问"),
     ;
 
-    private final Integer code;
+    private final String code;
 
     private final String message;
 
-    Assert(Integer code, String message) {
+    Assert(String code, String message) {
         this.code = code;
         this.message = message;
     }
 
     @Override
-    public Integer getCode() {
+    public String getCode() {
         return code;
     }
 

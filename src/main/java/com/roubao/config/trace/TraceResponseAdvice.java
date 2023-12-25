@@ -30,8 +30,8 @@ public class TraceResponseAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         if (body instanceof RespResult) {
-            if (((RespResult<?>) body).getTraceId() == null && MDCTraceUtils.getTraceId() != null) {
-                ((RespResult<?>) body).setTraceId(MDCTraceUtils.getTraceId());
+            if (((RespResult<?>) body).getBody().getTraceId() == null && MDCTraceUtils.getTraceId() != null) {
+                ((RespResult<?>) body).getBody().setTraceId(MDCTraceUtils.getTraceId());
             }
         }
         return body;

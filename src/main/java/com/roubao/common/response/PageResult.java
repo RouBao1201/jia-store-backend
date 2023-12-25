@@ -1,7 +1,8 @@
 package com.roubao.common.response;
 
-import lombok.Data;
+import com.roubao.common.constants.RespCodeEnum;
 import lombok.ToString;
+import org.springframework.http.HttpStatus;
 
 import java.io.Serial;
 
@@ -12,11 +13,14 @@ import java.io.Serial;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/12/17
  **/
-@Data
 @ToString
 public class PageResult<T> extends RespResult<PageList<T>> {
     @Serial
     private static final long serialVersionUID = 3229899843667734959L;
+
+    public PageResult(HttpStatus status, RespBody<PageList<T>> body) {
+        super(status, body);
+    }
 
     /**
      * 分页查询结果成功响应
@@ -27,11 +31,7 @@ public class PageResult<T> extends RespResult<PageList<T>> {
      * @return 分页结果数据
      */
     public static <T> PageResult<T> success(String message, PageList<T> data) {
-        PageResult<T> pageResult = new PageResult<>();
-        pageResult.setData(data);
-        pageResult.setCode(RespResult.CODE_SUCCESS);
-        pageResult.setMsg(message);
-        return pageResult;
+        return new PageResult<>(HttpStatus.OK, new RespBody<>(RespCodeEnum.SUCCESS.getCode(), message, data));
     }
 
     /**
@@ -42,10 +42,7 @@ public class PageResult<T> extends RespResult<PageList<T>> {
      * @return 分页结果数据
      */
     public static <T> PageResult<T> success(PageList<T> data) {
-        PageResult<T> pageResult = new PageResult<>();
-        pageResult.setData(data);
-        pageResult.setCode(RespResult.CODE_SUCCESS);
-        pageResult.setMsg(RespResult.MESSAGE_SUCCESS);
-        return pageResult;
+        return new PageResult<>(HttpStatus.OK, new RespBody<>(RespCodeEnum.SUCCESS.getCode(),
+                RespCodeEnum.SUCCESS.getMessage(), data));
     }
 }

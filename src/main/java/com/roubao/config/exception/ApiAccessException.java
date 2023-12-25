@@ -1,5 +1,7 @@
 package com.roubao.config.exception;
 
+import com.roubao.common.constants.RespCodeEnum;
+
 import java.io.Serial;
 
 /**
@@ -13,8 +15,8 @@ public class ApiAccessException extends BaseRuntimeException {
     private static final long serialVersionUID = -4715245646049230607L;
 
     @Override
-    public int getCode() {
-        return 403;
+    public String getCode() {
+        return RespCodeEnum.FORBIDDEN_ERROR.getCode();
     }
 
     public ApiAccessException() {

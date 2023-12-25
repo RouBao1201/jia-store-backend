@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 角色API
@@ -46,14 +45,14 @@ public class RoleController {
 
     @Operation(summary = "修改角色状态", description = "修改角色状态")
     @PutMapping("/changedStatus")
-    public RespResult<Objects> changedStatus(@Validated @RequestBody RoleChangedStatusRequest request) {
+    public RespResult<Object> changedStatus(@Validated @RequestBody RoleChangedStatusRequest request) {
         roleService.changedStatus(request);
         return RespResult.success();
     }
 
     @Operation(summary = "新增角色", description = "新增角色")
     @PostMapping("/save")
-    public RespResult<Objects> saveRole(@Validated @RequestBody RoleSaveRequest request) {
+    public RespResult<Object> saveRole(@Validated @RequestBody RoleSaveRequest request) {
         roleService.saveRole(request);
         return RespResult.success();
     }

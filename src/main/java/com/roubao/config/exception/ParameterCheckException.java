@@ -1,5 +1,6 @@
 package com.roubao.config.exception;
 
+import com.roubao.common.constants.RespCodeEnum;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serial;
@@ -16,8 +17,8 @@ public class ParameterCheckException extends BaseRuntimeException {
     private static final long serialVersionUID = 8276742042262341394L;
 
     @Override
-    public int getCode() {
-        return HttpStatus.BAD_REQUEST.value();
+    public String getCode() {
+        return RespCodeEnum.PARAMETER_ERROR.getCode();
     }
 
     public ParameterCheckException() {

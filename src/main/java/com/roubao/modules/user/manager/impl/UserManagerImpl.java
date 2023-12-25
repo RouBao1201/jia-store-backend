@@ -70,7 +70,7 @@ public class UserManagerImpl implements UserManager {
         EitherUtils.boolE(superAdmin != null).either(() -> {
             currentUserDto.setSuperAdmin(true);
             // 超级管理员获取所有权限
-            List<PermissionDO> permissionList = permissionMapper.listPermissionByStatus(null);
+            List<PermissionDO> permissionList = permissionMapper.listPermissionsByStatus(null);
             if (CollUtil.isNotEmpty(permissionList)) {
                 permissionList.forEach(it -> {
                     UserPermissionDto dto = new UserPermissionDto();
