@@ -1,6 +1,7 @@
 package com.roubao.config.thread;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -13,8 +14,9 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @copyright 2022-2099 SongYanBin All Rights Reserved.
  * @since 2022/12/1
  **/
-@Slf4j
 public class ThreadPoolRejectedHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(ThreadPoolRejectedHandler.class);
 
     /**
      * 由调用线程（提交任务的线程）处理该任务
@@ -102,7 +104,7 @@ public class ThreadPoolRejectedHandler {
     }
 
     private static void recordLog(ThreadPoolExecutor executor) {
-        log.warn("ThreadPoolRejectedHandler => The current thread pool exploded. Run thread count:" + executor.getPoolSize() + "; Active thread count:" + executor.getActiveCount() + "; Blocking queue count:" + executor.getQueue().size() + ".");
+        logger.warn("ThreadPoolRejectedHandler => The current thread pool exploded. Run thread count:" + executor.getPoolSize() + "; Active thread count:" + executor.getActiveCount() + "; Blocking queue count:" + executor.getQueue().size() + ".");
     }
 
 

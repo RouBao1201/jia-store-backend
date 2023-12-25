@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roubao.modules.user.mapper.PermissionMapper">
-    <select id="listPermissionByStatus" parameterType="java.lang.Integer" resultType="com.roubao.domain.PermissionPO">
+    <select id="listPermissionByStatus" parameterType="java.lang.Integer" resultType="com.roubao.domain.PermissionDO">
         SELECT id, auth_key, name, type, status, create_time, update_time
         FROM permission where 1 = 1
         <if test="status != null">

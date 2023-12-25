@@ -13,12 +13,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  **/
 @Data
 @ToString
-@ConfigurationProperties(prefix = "thread-pool.configuration")
+@ConfigurationProperties(prefix = "thread-pool.common")
 public class ThreadPoolProperties {
     /**
      * 线程池前缀
      */
-    private String prefixName = "jia-pool";
+    private String prefixName = "common-pool";
 
     /**
      * 等待队列长度

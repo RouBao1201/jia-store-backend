@@ -1,11 +1,11 @@
 package com.roubao.modules.dict.service;
 
 import com.roubao.common.response.PageList;
-import com.roubao.domain.DictConfigPO;
-import com.roubao.modules.dict.dto.DictConfigSaveReqDto;
-import com.roubao.modules.dict.dto.DictConfigRemoveReqDto;
-import com.roubao.modules.dict.dto.DictConfigPageQueryReqDto;
-import com.roubao.modules.dict.dto.DictConfigUpdateReqDto;
+import com.roubao.domain.DictConfigDO;
+import com.roubao.modules.dict.request.DictConfigSaveRequest;
+import com.roubao.modules.dict.request.DictConfigRemoveRequest;
+import com.roubao.modules.dict.request.DictConfigPageQueryRequest;
+import com.roubao.modules.dict.request.DictConfigUpdateRequest;
 
 import java.util.List;
 
@@ -23,34 +23,34 @@ public interface DictConfigService {
      * @param key 字典KEY
      * @return 字典配置
      */
-    List<DictConfigPO> listDictConfigByKey(String key);
+    List<DictConfigDO> listDictConfigByKey(String key);
 
     /**
      * 分页查询字典配置数据
      *
-     * @param reqDto 请求体
+     * @param request 请求体
      * @return 分页数据
      */
-    PageList<DictConfigPO> listPage(DictConfigPageQueryReqDto reqDto);
+    PageList<DictConfigDO> listPage(DictConfigPageQueryRequest request);
 
     /**
      * 新增字典配置
      *
-     * @param reqDto 请求体
+     * @param request 请求体
      */
-    void saveDictConfig(DictConfigSaveReqDto reqDto);
+    void saveDictConfig(DictConfigSaveRequest request);
 
     /**
      * 修改字典配置
      *
-     * @param reqDto 请求体
+     * @param request 请求体
      */
-    void updateDictConfig(DictConfigUpdateReqDto reqDto);
+    void updateDictConfig(DictConfigUpdateRequest request);
 
     /**
      * 删除字典配置
      *
-     * @param reqDto 请求体
+     * @param request 请求体
      */
-    void removeDictConfig(DictConfigRemoveReqDto reqDto);
+    void removeDictConfig(DictConfigRemoveRequest request);
 }

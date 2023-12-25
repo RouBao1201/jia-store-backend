@@ -14,7 +14,7 @@
           AND r.status = 1 LIMIT 1
     </select>
 
-    <select id="listUserPermission" resultType="com.roubao.domain.PermissionPO" parameterType="java.lang.Integer">
+    <select id="listUserPermission" resultType="com.roubao.domain.PermissionDO" parameterType="java.lang.Integer">
         SELECT p.id, p.auth_key, p.name, p.type, p.status, p.create_time, p.update_time
         FROM user u
                  JOIN user_role ur ON u.id = ur.user_id AND u.status = 1
@@ -24,7 +24,7 @@
         WHERE u.id = #{userId}
     </select>
 
-    <select id="listUserRole" resultType="com.roubao.domain.RolePO" parameterType="java.lang.Integer">
+    <select id="listUserRole" resultType="com.roubao.domain.RoleDO" parameterType="java.lang.Integer">
         SELECT r.id, r.name, r.status, r.create_time, r.update_time
         FROM user u
                  JOIN user_role ur ON u.id = ur.user_id

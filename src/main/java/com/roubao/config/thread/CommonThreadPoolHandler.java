@@ -1,7 +1,8 @@
 package com.roubao.config.thread;
 
 import cn.hutool.core.thread.ThreadFactoryBuilder;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,10 +21,10 @@ import java.util.concurrent.TimeUnit;
  * @copyright 2022-2099 SongYanBin All Rights Reserved.
  * @since 2022/12/23
  **/
-@Slf4j
 @Configuration
 @EnableConfigurationProperties(ThreadPoolProperties.class)
 public class CommonThreadPoolHandler {
+    private static final Logger logger = LoggerFactory.getLogger(CommonThreadPoolHandler.class);
 
     private static ThreadPoolExecutor threadPoolExecutor = null;
 
@@ -121,7 +122,7 @@ public class CommonThreadPoolHandler {
                     new ThreadFactoryBuilder()
                             .setNamePrefix(this.threadPoolProperties.getPrefixName() + "-")
                             .setUncaughtExceptionHandler(
-                                    (thread, throwable) -> log.error("CommonThreadPoolHandler => UncaughtExceptionHandler Thread[{}] execute exception. ErrorMessage:{}.", thread, throwable)).build(),
+                                    (thread, throwable) -> logger.error("CommonThreadPoolHandler => UncaughtExceptionHandler Thread[{}] execute exception. ErrorMessage:{}.", thread, throwable)).build(),
                     this.threadPoolProperties.getRejectedPolicy().getHandler()) {
                 @Override
                 protected void afterExecute(Runnable r, Throwable t) {
@@ -129,12 +130,12 @@ public class CommonThreadPoolHandler {
                         try {
                             ((FutureTask<?>) r).get();
                         } catch (Exception e) {
-                            log.error("CommonThreadPoolHandler => AfterExecute. Runnable[{}] execute exception. ErrorMessage:{}.", r, e.getMessage());
+                            logger.error("CommonThreadPoolHandler => AfterExecute. Runnable[{}] execute exception. ErrorMessage:{}.", r, e.getMessage());
                         }
                     }
                 }
             };
-            log.info("CommonThreadPoolHandler => Init threadPoolExecutor {prefixName:" + this.threadPoolProperties.getPrefixName() + ", coreSize:" + this.threadPoolProperties.getCorePoolSize() + ", maxSize:" + this.threadPoolProperties.getMaximumPoolSize() + ", keepAliveTime:" + this.threadPoolProperties.getKeepAliveTime() + "ms, blockQueueLength:" + this.threadPoolProperties.getBlockingQueueLength() + "}.");
+            logger.info("CommonThreadPoolHandler => Init threadPoolExecutor {prefixName:" + this.threadPoolProperties.getPrefixName() + ", coreSize:" + this.threadPoolProperties.getCorePoolSize() + ", maxSize:" + this.threadPoolProperties.getMaximumPoolSize() + ", keepAliveTime:" + this.threadPoolProperties.getKeepAliveTime() + "ms, blockQueueLength:" + this.threadPoolProperties.getBlockingQueueLength() + "}.");
         }
         return threadPoolExecutor;
     }

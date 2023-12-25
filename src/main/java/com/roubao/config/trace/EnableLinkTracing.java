@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import({TraceFilterConfiguration.class})
+@Import({MDCTraceConfiguration.class})
 public @interface EnableLinkTracing {
 
 }

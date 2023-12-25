@@ -1,9 +1,9 @@
 package com.roubao.modules.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.roubao.domain.PermissionPO;
-import com.roubao.domain.RolePO;
-import com.roubao.domain.UserPO;
+import com.roubao.domain.PermissionDO;
+import com.roubao.domain.RoleDO;
+import com.roubao.domain.UserDO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * @since 2023/12/10
  **/
 @Mapper
-public interface UserMapper extends BaseMapper<UserPO> {
+public interface UserMapper extends BaseMapper<UserDO> {
 
     /**
      * 判断是否超级管理员
@@ -32,7 +32,7 @@ public interface UserMapper extends BaseMapper<UserPO> {
      * @param userId 用户ID
      * @return 用户权限集合
      */
-    List<PermissionPO> listUserPermission(Integer userId);
+    List<PermissionDO> listUserPermission(Integer userId);
 
     /**
      * 查询用户所有角色
@@ -40,5 +40,5 @@ public interface UserMapper extends BaseMapper<UserPO> {
      * @param userId 用户ID
      * @return 角色集合
      */
-    List<RolePO> listUserRole(Integer userId);
+    List<RoleDO> listUserRole(Integer userId);
 }

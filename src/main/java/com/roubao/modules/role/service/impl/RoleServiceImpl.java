@@ -2,15 +2,16 @@ package com.roubao.modules.role.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.roubao.common.response.PageList;
-import com.roubao.domain.PermissionPO;
-import com.roubao.domain.RolePO;
-import com.roubao.modules.role.dto.RoleChangedStatusReqDto;
-import com.roubao.modules.role.dto.RolePageQueryReqDto;
-import com.roubao.modules.role.dto.RoleSaveReqDto;
+import com.roubao.domain.PermissionDO;
+import com.roubao.domain.RoleDO;
 import com.roubao.modules.role.mapper.RoleMapper;
+import com.roubao.modules.role.request.RoleChangedStatusRequest;
+import com.roubao.modules.role.request.RolePageQueryRequest;
+import com.roubao.modules.role.request.RoleSaveRequest;
 import com.roubao.modules.role.service.RoleService;
 import com.roubao.util.PageUtils;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,46 +26,48 @@ import java.util.List;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/12/23
  **/
-@Slf4j
 @Service
 public class RoleServiceImpl implements RoleService {
+
+    private static final Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 
     @Autowired
     private RoleMapper roleMapper;
 
     @Override
-    public PageList<RolePO> listPage(RolePageQueryReqDto reqDto) {
-        return PageUtils.doStart(reqDto, () -> roleMapper.listPage(reqDto), RolePO.class);
+    public PageList<RoleDO> listPage(RolePageQueryRequest request) {
+        return PageUtils.doStart(request, () -> roleMapper.listPage(request), RoleDO.class);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void changedStatus(RoleChangedStatusReqDto reqDto) {
-        RolePO po = new RolePO();
-        po.setId(reqDto.getId());
-        po.setStatus(reqDto.getStatus());
+    public void changedStatus(RoleChangedStatusRequest request) {
+        RoleDO po = new RoleDO();
+        po.setId(request.getId());
+        po.setStatus(request.getStatus());
         roleMapper.updateById(po);
     }
 
     @Override
-    public void saveRole(RoleSaveReqDto reqDto) {
-        RolePO po = new RolePO();
-        po.setName(reqDto.getName());
-        po.setStatus(reqDto.getStatus());
+    @Transactional(rollbackFor = Exception.class)
+    public void saveRole(RoleSaveRequest request) {
+        RoleDO po = new RoleDO();
+        po.setName(request.getName());
+        po.setStatus(request.getStatus());
         po.setCreateTime(new Date());
         po.setUpdateTime(new Date());
         roleMapper.insert(po);
     }
 
     @Override
-    public List<RolePO> listAllRole() {
-        LambdaQueryWrapper<RolePO> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(RolePO::getStatus, RolePO.STATUS_ENABLED);
+    public List<RoleDO> listAllRole() {
+        LambdaQueryWrapper<RoleDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleDO::getStatus, RoleDO.STATUS_ENABLED);
         return roleMapper.selectList(wrapper);
     }
 
     @Override
-    public List<PermissionPO> listRolePermission(Integer roleId) {
-        return roleMapper.listRolePermission(roleId);
+    public List<PermissionDO> listRolePermissions(Integer roleId) {
+        return roleMapper.listRolePermissions(roleId);
     }
 }

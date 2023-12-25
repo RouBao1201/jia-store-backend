@@ -1,9 +1,9 @@
 package com.roubao.modules.role.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.roubao.domain.PermissionPO;
-import com.roubao.domain.RolePO;
-import com.roubao.modules.role.dto.RolePageQueryReqDto;
+import com.roubao.domain.PermissionDO;
+import com.roubao.domain.RoleDO;
+import com.roubao.modules.role.request.RolePageQueryRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,14 +17,14 @@ import java.util.List;
  * @since 2023/12/23
  **/
 @Mapper
-public interface RoleMapper extends BaseMapper<RolePO> {
+public interface RoleMapper extends BaseMapper<RoleDO> {
     /**
      * 分页查询角色
      *
-     * @param reqDto 请求体
+     * @param request 请求体
      * @return 角色列表
      */
-    List<RolePO> listPage(RolePageQueryReqDto reqDto);
+    List<RoleDO> listPage(RolePageQueryRequest request);
 
     /**
      * 查询角色权限
@@ -32,5 +32,5 @@ public interface RoleMapper extends BaseMapper<RolePO> {
      * @param roleId 角色ID
      * @return 角色权限
      */
-    List<PermissionPO> listRolePermission(@Param("roleId") Integer roleId);
+    List<PermissionDO> listRolePermissions(@Param("roleId") Integer roleId);
 }

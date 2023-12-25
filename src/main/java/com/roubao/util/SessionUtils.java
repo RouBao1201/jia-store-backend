@@ -2,7 +2,8 @@ package com.roubao.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -15,8 +16,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @copyright ©2023-2099 SongYanBin. All rights reserved.
  * @since 2023/6/15
  **/
-@Slf4j
 public class SessionUtils {
+    private static final Logger logger = LoggerFactory.getLogger(SessionUtils.class);
+
     /**
      * 获取HttpSession
      *
@@ -116,7 +118,7 @@ public class SessionUtils {
     public static HttpServletRequest getRequest() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
-            log.error("SessionUtil ==> RequestAttributes is null.");
+            logger.error("SessionUtil ==> RequestAttributes is null.");
             return null;
         }
         return ((ServletRequestAttributes) requestAttributes).getRequest();

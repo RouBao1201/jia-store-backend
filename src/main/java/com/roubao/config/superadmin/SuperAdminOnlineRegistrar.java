@@ -1,8 +1,8 @@
 package com.roubao.config.superadmin;
 
 import cn.hutool.core.util.StrUtil;
-import com.roubao.config.cache.token.TokenCacheHolder;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -22,8 +22,10 @@ import java.util.Objects;
  * @author: SongYanBin
  * @date: 2023-12-12
  */
-@Slf4j
 public class SuperAdminOnlineRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
+
+    private static final Logger logger = LoggerFactory.getLogger(SuperAdminOnlineRegistrar.class);
+
     private Environment environment;
 
     @Override
@@ -37,12 +39,12 @@ public class SuperAdminOnlineRegistrar implements ImportBeanDefinitionRegistrar,
             // 校验启动环境信息是否满足超级管理员加载条件
             String[] activeProfiles = environment.getActiveProfiles();
             if (activeProfiles.length == 0) {
-                log.error("SuperAdminOnlineRegistrar ==> 超级管理员[{}]加载失败，未指定环境配置文件!", userId);
+                logger.error("SuperAdminOnlineRegistrar ==> 超级管理员[{}]加载失败，未指定环境配置文件!", userId);
                 return;
             }
             for (String activeProfile : environment.getActiveProfiles()) {
                 if (!includeProfiles.contains(activeProfile)) {
-                    log.error("SuperAdminOnlineRegistrar ==> 超级管理员[{}]加载失败，环境配置文件：[{}]，注解配置：[{}].", userId, activeProfile, StrUtil.join("/", includeProfiles));
+                    logger.error("SuperAdminOnlineRegistrar ==> 超级管理员[{}]加载失败，环境配置文件：[{}]，注解配置：[{}].", userId, activeProfile, StrUtil.join("/", includeProfiles));
                     return;
                 }
             }
@@ -51,7 +53,7 @@ public class SuperAdminOnlineRegistrar implements ImportBeanDefinitionRegistrar,
             ConstructorArgumentValues constructorArgumentValues = beanDefinition.getConstructorArgumentValues();
             constructorArgumentValues.addIndexedArgumentValue(0, userId);
             registry.registerBeanDefinition(SuperAdmin.BEAN_NAME, beanDefinition);
-            log.info("SuperAdminOnlineRegistrar ==> 超级管理员[{}]，已上线！环境配置文件：[{}]，注解配置：[{}].",
+            logger.info("SuperAdminOnlineRegistrar ==> 超级管理员[{}]，已上线！环境配置文件：[{}]，注解配置：[{}].",
                     userId, StrUtil.join(",", environment.getActiveProfiles()), StrUtil.join("/", includeProfiles));
         }
     }

@@ -4,17 +4,16 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.roubao.common.response.PageList;
 import com.roubao.config.exception.ParameterCheckException;
-import com.roubao.domain.DictConfigPO;
-import com.roubao.modules.dict.dto.DictConfigPageQueryReqDto;
-import com.roubao.modules.dict.dto.DictConfigRemoveReqDto;
-import com.roubao.modules.dict.dto.DictConfigSaveReqDto;
-import com.roubao.modules.dict.dto.DictConfigUpdateReqDto;
-import com.roubao.modules.dict.dto.DictPairReqDto;
+import com.roubao.domain.DictConfigDO;
 import com.roubao.modules.dict.mapper.DictConfigMapper;
+import com.roubao.modules.dict.request.DictConfigPageQueryRequest;
+import com.roubao.modules.dict.request.DictConfigRemoveRequest;
+import com.roubao.modules.dict.request.DictConfigSaveRequest;
+import com.roubao.modules.dict.request.DictConfigUpdateRequest;
+import com.roubao.modules.dict.request.DictPairRequest;
 import com.roubao.modules.dict.service.DictConfigService;
 import com.roubao.util.EitherUtils;
 import com.roubao.util.PageUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,36 +27,35 @@ import java.util.List;
  * @author: SongYanBin
  * @date: 2023-12-14
  */
-@Slf4j
 @Service
 public class DictConfigServiceImpl implements DictConfigService {
     @Autowired
     private DictConfigMapper dictConfigMapper;
 
     @Override
-    public List<DictConfigPO> listDictConfigByKey(String key) {
-        LambdaQueryWrapper<DictConfigPO> dictConfigQueryWrapper = new LambdaQueryWrapper<>();
-        dictConfigQueryWrapper.eq(DictConfigPO::getDictKey, key);
+    public List<DictConfigDO> listDictConfigByKey(String key) {
+        LambdaQueryWrapper<DictConfigDO> dictConfigQueryWrapper = new LambdaQueryWrapper<>();
+        dictConfigQueryWrapper.eq(DictConfigDO::getDictKey, key);
         return dictConfigMapper.selectList(dictConfigQueryWrapper);
     }
 
     @Override
-    public PageList<DictConfigPO> listPage(DictConfigPageQueryReqDto reqDto) {
-        return PageUtils.doStart(reqDto, () -> dictConfigMapper.listPageDictConfig(reqDto), DictConfigPO.class);
+    public PageList<DictConfigDO> listPage(DictConfigPageQueryRequest request) {
+        return PageUtils.doStart(request, () -> dictConfigMapper.listPageDictConfig(request), DictConfigDO.class);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveDictConfig(DictConfigSaveReqDto reqDto) {
-        List<DictConfigPO> exitsUniques = dictConfigMapper.listDictConfigByUniques(reqDto);
+    public void saveDictConfig(DictConfigSaveRequest request) {
+        List<DictConfigDO> exitsUniques = dictConfigMapper.listDictConfigByUniques(request);
         EitherUtils.boolE(CollUtil.isNotEmpty(exitsUniques)).either(() -> {
             throw new ParameterCheckException(String.format("已存在相同的字典配置: [%s - %s]", exitsUniques.get(0).getLabel(), exitsUniques.get(0).getValue()));
         }, () -> {
             // 数据正常就几条无需批量执行
-            List<DictPairReqDto> dictPair = reqDto.getDictPair();
-            for (DictPairReqDto pair : dictPair) {
-                DictConfigPO po = new DictConfigPO();
-                po.setDictKey(reqDto.getDictKey());
+            List<DictPairRequest> dictPair = request.getDictPair();
+            for (DictPairRequest pair : dictPair) {
+                DictConfigDO po = new DictConfigDO();
+                po.setDictKey(request.getDictKey());
                 po.setLabel(pair.getLabel());
                 po.setValue(pair.getValue());
                 po.setCreateTime(new Date());
@@ -69,27 +67,27 @@ public class DictConfigServiceImpl implements DictConfigService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateDictConfig(DictConfigUpdateReqDto reqDto) {
-        LambdaQueryWrapper<DictConfigPO> dictConfigQueryWrapper = new LambdaQueryWrapper<>();
-        dictConfigQueryWrapper.eq(DictConfigPO::getDictKey, reqDto.getDictKey());
-        dictConfigQueryWrapper.eq(DictConfigPO::getLabel, reqDto.getLabel());
-        dictConfigQueryWrapper.eq(DictConfigPO::getValue, reqDto.getValue());
+    public void updateDictConfig(DictConfigUpdateRequest request) {
+        LambdaQueryWrapper<DictConfigDO> dictConfigQueryWrapper = new LambdaQueryWrapper<>();
+        dictConfigQueryWrapper.eq(DictConfigDO::getDictKey, request.getDictKey());
+        dictConfigQueryWrapper.eq(DictConfigDO::getLabel, request.getLabel());
+        dictConfigQueryWrapper.eq(DictConfigDO::getValue, request.getValue());
         boolean exists = dictConfigMapper.exists(dictConfigQueryWrapper);
         EitherUtils.boolE(exists).either(() -> {
             throw new RuntimeException("配置已存在");
         }, () -> {
-            DictConfigPO po = new DictConfigPO();
-            po.setId(reqDto.getId());
-            po.setDictKey(reqDto.getDictKey());
-            po.setLabel(reqDto.getLabel());
-            po.setValue(reqDto.getValue());
+            DictConfigDO po = new DictConfigDO();
+            po.setId(request.getId());
+            po.setDictKey(request.getDictKey());
+            po.setLabel(request.getLabel());
+            po.setValue(request.getValue());
             po.setUpdateTime(new Date());
             dictConfigMapper.updateById(po);
         });
     }
 
     @Override
-    public void removeDictConfig(DictConfigRemoveReqDto reqDto) {
-        dictConfigMapper.deleteById(reqDto.getId());
+    public void removeDictConfig(DictConfigRemoveRequest request) {
+        dictConfigMapper.deleteById(request.getId());
     }
 }

@@ -1,7 +1,8 @@
 package com.roubao.util;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,8 +14,9 @@ import java.security.NoSuchAlgorithmException;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/4/5
  **/
-@Slf4j
 public class MD5Utils {
+    private static final Logger logger = LoggerFactory.getLogger(MD5Utils.class);
+
     private static final String MESSAGE_DIGEST = "MD5";
 
     private static final String DEFAULT_SALT = "Jia-Store-Key";
@@ -51,7 +53,7 @@ public class MD5Utils {
      */
     public static String encrypt(String clearStr, String salt) {
         if (StrUtil.isEmpty(clearStr)) {
-            log.error("MD5Util ==> The encryption password cannot be empty.");
+            logger.error("MD5Util ==> The encryption password cannot be empty.");
             return null;
         }
 
@@ -60,7 +62,7 @@ public class MD5Utils {
         try {
             md = MessageDigest.getInstance(MESSAGE_DIGEST);
         } catch (NoSuchAlgorithmException e) {
-            log.error("MD5Util ==> Encrypt is error[NoSuchAlgorithmException]. return default cipher is empty. ErrorMessage:{}", e.getMessage());
+            logger.error("MD5Util ==> Encrypt is error[NoSuchAlgorithmException]. return default cipher is empty. ErrorMessage:{}", e.getMessage());
             return null;
         }
 

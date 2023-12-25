@@ -1,11 +1,11 @@
 package com.roubao.modules.role.service;
 
 import com.roubao.common.response.PageList;
-import com.roubao.domain.PermissionPO;
-import com.roubao.domain.RolePO;
-import com.roubao.modules.role.dto.RoleChangedStatusReqDto;
-import com.roubao.modules.role.dto.RolePageQueryReqDto;
-import com.roubao.modules.role.dto.RoleSaveReqDto;
+import com.roubao.domain.PermissionDO;
+import com.roubao.domain.RoleDO;
+import com.roubao.modules.role.request.RoleChangedStatusRequest;
+import com.roubao.modules.role.request.RolePageQueryRequest;
+import com.roubao.modules.role.request.RoleSaveRequest;
 
 import java.util.List;
 
@@ -21,36 +21,36 @@ public interface RoleService {
     /**
      * 分页查询角色
      *
-     * @param reqDto 请求体
+     * @param request 请求体
      * @return 角色集合
      */
-    PageList<RolePO> listPage(RolePageQueryReqDto reqDto);
+    PageList<RoleDO> listPage(RolePageQueryRequest request);
 
     /**
      * 删除角色
      *
-     * @param reqDto 请求体
+     * @param request 请求体
      */
-    void changedStatus(RoleChangedStatusReqDto reqDto);
+    void changedStatus(RoleChangedStatusRequest request);
 
     /**
      * 新增角色
      *
-     * @param reqDto 请求体
+     * @param request 请求体
      */
-    void saveRole(RoleSaveReqDto reqDto);
+    void saveRole(RoleSaveRequest request);
 
     /**
      * 获取所有角色
      *
      * @return 角色集合
      */
-    List<RolePO> listAllRole();
+    List<RoleDO> listAllRole();
 
     /**
      * 查询角色权限
      *
      * @param id 角色ID
      */
-    List<PermissionPO> listRolePermission(Integer roleId);
+    List<PermissionDO> listRolePermissions(Integer roleId);
 }

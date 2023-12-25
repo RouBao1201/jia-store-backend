@@ -3,7 +3,8 @@ package com.roubao.config.exception;
 import com.roubao.common.response.RespResult;
 import com.roubao.config.asserts.AssertException;
 import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,9 +18,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/4/4
  **/
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 参数异常处理@Validated
@@ -43,7 +44,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AssertException.class)
     public RespResult<Object> assertExceptionHandler(AssertException ex) {
-        log.error("GlobalExceptionHandler ==> AssertException: {}", ex.getMessage(), ex);
+        logger.warn("GlobalExceptionHandler ==> AssertException: {}", ex.getMessage(), ex);
         return RespResult.error(ex.getCode(), ex.getMessage());
     }
 
@@ -52,7 +53,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BaseRuntimeException.class)
     public RespResult<Object> baseRuntimeExceptionHandler(BaseRuntimeException ex) {
-        log.error("GlobalExceptionHandler ==> BaseRuntimeException: {}", ex.getMessage(), ex);
+        logger.error("GlobalExceptionHandler ==> BaseRuntimeException: {}", ex.getMessage(), ex);
         return RespResult.error(ex.getCode(), ex.getMessage());
     }
 
@@ -61,7 +62,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(RuntimeException.class)
     public RespResult<Object> runtimeExceptionHandler(RuntimeException ex) {
-        log.error("GlobalExceptionHandler ==> RuntimeException: {}", ex.getMessage(), ex);
+        logger.error("GlobalExceptionHandler ==> RuntimeException: {}", ex.getMessage(), ex);
         return RespResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙: " + ex.getMessage());
     }
 
@@ -70,7 +71,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public RespResult<Object> exceptionHandler(Exception ex) {
-        log.error("GlobalExceptionHandler ==> Exception: {}", ex.getMessage(), ex);
+        logger.error("GlobalExceptionHandler ==> Exception: {}", ex.getMessage(), ex);
         return RespResult.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器繁忙: " + ex.getMessage());
     }
 }

@@ -9,7 +9,6 @@ import com.roubao.helper.RedisHelper;
 import com.roubao.util.SpringContextHolder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,9 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/4/4
  **/
-@Slf4j
 public class AuthInterceptor implements HandlerInterceptor {
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {

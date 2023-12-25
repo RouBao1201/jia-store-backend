@@ -5,7 +5,8 @@ import com.roubao.helper.RedisHelper;
 import com.roubao.util.MD5Utils;
 import com.roubao.util.SessionUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.Random;
@@ -18,8 +19,8 @@ import java.util.concurrent.TimeUnit;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/12/11
  **/
-@Slf4j
 public class TokenCacheHolder {
+    private static final Logger logger = LoggerFactory.getLogger(TokenCacheHolder.class);
 
     public static final String TOKEN_HEADER_KEY = "Authorization";
 

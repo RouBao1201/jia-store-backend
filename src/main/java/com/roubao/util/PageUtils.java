@@ -3,10 +3,11 @@ package com.roubao.util;
 import com.github.pagehelper.ISelect;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.roubao.common.request.PageReqDto;
+import com.roubao.common.request.PageRequest;
 import com.roubao.common.response.PageList;
 import com.roubao.config.exception.ParameterCheckException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,8 @@ import java.util.function.Consumer;
  * @copyright 2023-2099 SongYanBin All Rights Reserved.
  * @since 2023/12/17
  **/
-@Slf4j
 public class PageUtils {
+    private static final Logger logger = LoggerFactory.getLogger(PageUtils.class);
 
     /**
      * 分页查询
@@ -32,9 +33,9 @@ public class PageUtils {
      * @param <R>    响应类型枚举
      * @return PageList分页通用响应体
      */
-    public static <T extends PageReqDto, R> PageList<R> doStart(T reqDto, ISelect select, Class<R> clazz) {
+    public static <T extends PageRequest, R> PageList<R> doStart(T reqDto, ISelect select, Class<R> clazz) {
         if (reqDto.getCurrent() == null || reqDto.getPageSize() == null) {
-            log.error("PageUtil ==> The current and pageSize cannot be null.");
+            logger.warn("PageUtil ==> The current and pageSize cannot be null.");
             throw new ParameterCheckException("The current and pageSize cannot be null.");
         }
 
@@ -60,8 +61,8 @@ public class PageUtils {
      * @param <R>      响应类型枚举
      * @return PageList分页通用响应体
      */
-    public static <T extends PageReqDto, R> PageList<R> doStartAfter(T reqDto, ISelect select, Class<R> clazz,
-                                                                     Consumer<List<R>> consumer) {
+    public static <T extends PageRequest, R> PageList<R> doStartAfter(T reqDto, ISelect select, Class<R> clazz,
+                                                                      Consumer<List<R>> consumer) {
         PageList<R> pageResult = doStart(reqDto, select, clazz);
         consumer.accept(pageResult.getList());
         // 重新赋值总数,避免在后置操作中对数据进行修改
@@ -78,7 +79,7 @@ public class PageUtils {
      * @param <R>    响应体枚举
      * @return PageList
      */
-    public static <T extends PageReqDto, R> PageList<R> doEmpty(T reqDto, Class<R> clazz) {
+    public static <T extends PageRequest, R> PageList<R> doEmpty(T reqDto, Class<R> clazz) {
         PageList<R> respResult = new PageList<>();
         setCommonData(reqDto, respResult);
         respResult.setTotal(0L);
@@ -121,7 +122,7 @@ public class PageUtils {
         return new PageJudge(true);
     }
 
-    private static <T extends PageReqDto, R> void setCommonData(T reqDto, PageList<R> respResult) {
+    private static <T extends PageRequest, R> void setCommonData(T reqDto, PageList<R> respResult) {
         respResult.setCurrent(reqDto.getCurrent());
         respResult.setPageSize(reqDto.getPageSize());
     }
@@ -159,7 +160,7 @@ public class PageUtils {
          * @param <R>    响应体枚举
          * @return PageList
          */
-        public <T extends PageReqDto, R> PageList<R> doStart(T reqDto, ISelect select, Class<R> clazz) {
+        public <T extends PageRequest, R> PageList<R> doStart(T reqDto, ISelect select, Class<R> clazz) {
             if (this.conditionResult) {
                 return PageUtils.doStart(reqDto, select, clazz);
             } else {
@@ -178,8 +179,8 @@ public class PageUtils {
          * @param <R>      响应类型枚举
          * @return PageList分页通用响应体
          */
-        public <T extends PageReqDto, R> PageList<R> doStartAfter(T reqDto, ISelect select, Class<R> clazz,
-                                                                  Consumer<List<R>> consumer) {
+        public <T extends PageRequest, R> PageList<R> doStartAfter(T reqDto, ISelect select, Class<R> clazz,
+                                                                   Consumer<List<R>> consumer) {
             if (this.conditionResult) {
                 PageList<R> pageResult = PageUtils.doStart(reqDto, select, clazz);
                 consumer.accept(pageResult.getList());

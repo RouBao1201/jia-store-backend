@@ -1,12 +1,12 @@
 package com.roubao.modules.user.service;
 
 import com.roubao.modules.user.dto.CurrentUserDto;
-import com.roubao.modules.user.dto.LoginReqDto;
-import com.roubao.modules.user.dto.LoginRespDto;
-import com.roubao.modules.user.dto.PersonalSettingsReqDto;
-import com.roubao.modules.user.dto.RegisterReqDto;
-import com.roubao.modules.user.dto.ReviseReqDto;
-import com.roubao.modules.user.dto.SmsCodeSendReqDto;
+import com.roubao.modules.user.request.LoginRequest;
+import com.roubao.modules.user.response.LoginResponse;
+import com.roubao.modules.user.request.PersonalSettingsRequest;
+import com.roubao.modules.user.request.RegisterRequest;
+import com.roubao.modules.user.request.ReviseRequest;
+import com.roubao.modules.user.request.SmsCodeSendRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -21,50 +21,50 @@ public interface UserService {
     /**
      * 用户登录
      *
-     * @param reqDto 登录请求体
+     * @param request 登录请求体
      * @return 登录响应体
      */
-    LoginRespDto login(LoginReqDto reqDto);
+    LoginResponse login(LoginRequest request);
 
     /**
      * 用户注册
      *
-     * @param reqDto 注册请求体
+     * @param request 注册请求体
      */
-    void register(RegisterReqDto reqDto);
+    void register(RegisterRequest request);
 
     /**
      * 用户修改密码（短信）
      *
-     * @param reqDto 修改请求体
+     * @param request 修改请求体
      */
-    void revisePassword(ReviseReqDto reqDto);
+    void revisePassword(ReviseRequest request);
 
     /**
      * 个人信息设置
      *
      * @param reqDto 修改请求体
      */
-    void personalSettings(PersonalSettingsReqDto reqDto);
+    void personalSettings(PersonalSettingsRequest reqDto);
 
     /**
      * 用户注销
      *
      * @return 注销是否成功
      */
-    void logout(HttpServletRequest request);
+    void logout(HttpServletRequest httpServletRequest);
 
     /**
      * 获取当前用户
      *
      * @return 当前用户信息
      */
-    CurrentUserDto getCurrentUser(HttpServletRequest... request);
+    CurrentUserDto getCurrentUser(HttpServletRequest... httpServletRequest);
 
     /**
      * 短信验证码发送
      *
-     * @param reqDto 验证码发送请求体
+     * @param request 验证码发送请求体
      */
-    void sendSmsCode(SmsCodeSendReqDto reqDto);
+    void sendSmsCode(SmsCodeSendRequest request);
 }

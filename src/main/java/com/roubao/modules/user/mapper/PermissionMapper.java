@@ -1,6 +1,6 @@
 package com.roubao.modules.user.mapper;
 
-import com.roubao.domain.PermissionPO;
+import com.roubao.domain.PermissionDO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -19,5 +19,5 @@ public interface PermissionMapper {
      *
      * @return 权限列表
      */
-    List<PermissionPO> listPermissionByStatus(Integer status);
+    List<PermissionDO> listPermissionByStatus(Integer status);
 }

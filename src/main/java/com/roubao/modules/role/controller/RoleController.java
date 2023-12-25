@@ -2,12 +2,12 @@ package com.roubao.modules.role.controller;
 
 import com.roubao.common.response.PageResult;
 import com.roubao.common.response.RespResult;
-import com.roubao.domain.PermissionPO;
-import com.roubao.domain.RolePO;
-import com.roubao.modules.role.dto.RoleChangedStatusReqDto;
-import com.roubao.modules.role.dto.RolePageQueryReqDto;
-import com.roubao.modules.role.dto.RolePermissionQueryReqDto;
-import com.roubao.modules.role.dto.RoleSaveReqDto;
+import com.roubao.domain.PermissionDO;
+import com.roubao.domain.RoleDO;
+import com.roubao.modules.role.request.RoleChangedStatusRequest;
+import com.roubao.modules.role.request.RolePageQueryRequest;
+import com.roubao.modules.role.request.RolePermissionQueryRequest;
+import com.roubao.modules.role.request.RoleSaveRequest;
 import com.roubao.modules.role.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,33 +40,33 @@ public class RoleController {
 
     @Operation(summary = "分页查询角色", description = "分页查询角色")
     @PostMapping("/listPage")
-    public PageResult<RolePO> listPage(@RequestBody RolePageQueryReqDto reqDto) {
-        return PageResult.success(roleService.listPage(reqDto));
+    public PageResult<RoleDO> listPage(@RequestBody RolePageQueryRequest request) {
+        return PageResult.success(roleService.listPage(request));
     }
 
     @Operation(summary = "修改角色状态", description = "修改角色状态")
     @PutMapping("/changedStatus")
-    public RespResult<Objects> changedStatus(@Validated @RequestBody RoleChangedStatusReqDto reqDto) throws InterruptedException {
-        roleService.changedStatus(reqDto);
+    public RespResult<Objects> changedStatus(@Validated @RequestBody RoleChangedStatusRequest request) {
+        roleService.changedStatus(request);
         return RespResult.success();
     }
 
     @Operation(summary = "新增角色", description = "新增角色")
     @PostMapping("/save")
-    public RespResult<Objects> saveRole(@Validated @RequestBody RoleSaveReqDto reqDto) {
-        roleService.saveRole(reqDto);
+    public RespResult<Objects> saveRole(@Validated @RequestBody RoleSaveRequest request) {
+        roleService.saveRole(request);
         return RespResult.success();
     }
 
     @Operation(summary = "查询所有角色", description = "查询所有角色")
     @GetMapping("/listAllRole")
-    public RespResult<List<RolePO>> listAllRole() {
+    public RespResult<List<RoleDO>> listAllRole() {
         return RespResult.success(roleService.listAllRole());
     }
 
     @Operation(summary = "查询角色权限", description = "查询角色权限")
-    @PostMapping("/listRolePermission")
-    public RespResult<List<PermissionPO>> listRolePermission(@Validated @RequestBody RolePermissionQueryReqDto reqDto) {
-        return RespResult.success(roleService.listRolePermission(reqDto.getId()));
+    @PostMapping("/listRolePermissions")
+    public RespResult<List<PermissionDO>> listRolePermissions(@Validated @RequestBody RolePermissionQueryRequest request) {
+        return RespResult.success(roleService.listRolePermissions(request.getId()));
     }
 }
