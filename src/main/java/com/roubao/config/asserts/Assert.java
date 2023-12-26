@@ -12,7 +12,7 @@ import com.roubao.common.constants.RespCodeEnum;
 public enum Assert implements AssertPerformerExceptionHandler {
     PARAMETER_ERROR(RespCodeEnum.PARAMETER_ERROR.getCode(), "参数错误"),
 
-    UNAUTHORIZED_ERROR(RespCodeEnum.UNAUTHORIZED_ERROR.getCode(), "权限不足"),
+    UNAUTHORIZED_ERROR(RespCodeEnum.UNAUTHORIZED_ERROR.getCode(), "未授权"),
 
     FORBIDDEN_ERROR(RespCodeEnum.FORBIDDEN_ERROR.getCode(), "禁止访问"),
     ;

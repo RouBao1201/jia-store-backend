@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AssertException.class)
     public RespResult<Object> assertExceptionHandler(AssertException ex) {
-        logger.warn("GlobalExceptionHandler ==> AssertException: {}", ex.getMessage(), ex);
+//        logger.warn("GlobalExceptionHandler ==> AssertException: {}", ex.getMessage(), ex);
         return RespResult.failure(ex.getCode(), ex.getMessage());
     }
 
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BaseRuntimeException.class)
     public RespResult<Object> baseRuntimeExceptionHandler(BaseRuntimeException ex) {
-        logger.error("GlobalExceptionHandler ==> BaseRuntimeException: {}", ex.getMessage(), ex);
+//        logger.error("GlobalExceptionHandler ==> BaseRuntimeException: {}", ex.getMessage(), ex);
         return RespResult.failure(ex.getCode(), ex.getMessage());
     }
 
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public RespResult<Object> runtimeExceptionHandler(RuntimeException ex) {
         logger.error("GlobalExceptionHandler ==> RuntimeException: {}", ex.getMessage(), ex);
-        return RespResult.failure(HttpStatus.INTERNAL_SERVER_ERROR, RespCodeEnum.INTERNAL_SERVER_ERROR.getCode(), "服务器繁忙: " + ex.getMessage());
+        return RespResult.error(HttpStatus.INTERNAL_SERVER_ERROR, RespCodeEnum.INTERNAL_SERVER_ERROR.getCode(), "服务器繁忙: " + ex.getMessage());
     }
 
     /**
@@ -73,6 +73,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public RespResult<Object> exceptionHandler(Exception ex) {
         logger.error("GlobalExceptionHandler ==> Exception: {}", ex.getMessage(), ex);
-        return RespResult.failure(HttpStatus.INTERNAL_SERVER_ERROR, RespCodeEnum.INTERNAL_SERVER_ERROR.getCode(), "服务器繁忙: " + ex.getMessage());
+        return RespResult.error(HttpStatus.INTERNAL_SERVER_ERROR, RespCodeEnum.INTERNAL_SERVER_ERROR.getCode(), "服务器繁忙: " + ex.getMessage());
     }
 }

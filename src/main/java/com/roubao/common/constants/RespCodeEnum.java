@@ -13,10 +13,10 @@ import lombok.Getter;
 @Getter
 public enum RespCodeEnum {
     SUCCESS("0000", "success"),
-    PARAMETER_ERROR("A0001", "请求参数错误"),
-    UNAUTHORIZED_ERROR("A0401", "权限不足"),
+    PARAMETER_ERROR("A0001", "参数错误"),
+    UNAUTHORIZED_ERROR("A0401", "未授权"),
     FORBIDDEN_ERROR("A0403", "禁止访问"),
-    INTERNAL_SERVER_ERROR("B0001", "服务器异常");
+    INTERNAL_SERVER_ERROR("B0500", "服务器异常");
 
     private final String code;
 

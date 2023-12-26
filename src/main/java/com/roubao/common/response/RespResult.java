@@ -172,7 +172,19 @@ public class RespResult<T> extends ResponseEntity<RespBody<T>> implements Serial
     }
 
     /**
-     * 失败响应
+     * 错误响应
+     *
+     * @param code    响应编码
+     * @param message 响应消息
+     * @param <T>     数据泛型
+     * @return RespResult
+     */
+    public static <T> RespResult<T> error(String code, String message) {
+        return new RespResult<>(HttpStatus.INTERNAL_SERVER_ERROR, new RespBody<>(code, message, null));
+    }
+
+    /**
+     * 错误响应
      *
      * @param status  http状态码
      * @param code    响应编码
@@ -180,7 +192,7 @@ public class RespResult<T> extends ResponseEntity<RespBody<T>> implements Serial
      * @param <T>     数据泛型
      * @return RespResult
      */
-    public static <T> RespResult<T> failure(HttpStatus status, String code, String message) {
+    public static <T> RespResult<T> error(HttpStatus status, String code, String message) {
         return new RespResult<>(status, new RespBody<>(code, message, null));
     }
 
