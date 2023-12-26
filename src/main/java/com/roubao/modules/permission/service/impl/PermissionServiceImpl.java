@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
+ * 权限业务接口实现
+ *
  * @author: SongYanBin
  * @date: 2023-12-25
  */

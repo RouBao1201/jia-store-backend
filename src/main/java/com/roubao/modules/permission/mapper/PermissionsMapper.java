@@ -5,6 +5,8 @@ import com.roubao.domain.PermissionDO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
+ * 权限Mapper
+ *
  * @author: SongYanBin
  * @date: 2023-12-25
  */
