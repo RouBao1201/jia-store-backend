@@ -192,7 +192,7 @@ public class RespResult<T> extends ResponseEntity<RespBody<T>> implements Serial
     private static RespResult<Object> buildEmptySuccess() {
         RespResult<Object> result = EMPTY_SUCCESS == null ? null : EMPTY_SUCCESS.get();
         if (result == null) {
-            result = new RespResult<>(HttpStatus.OK, new RespBody<>(RespCodeEnum.SUCCESS.getCode(), RespCodeEnum.SUCCESS.getMessage(), new Object()));
+            result = new RespResult<>(HttpStatus.OK, new RespBody<>(RespCodeEnum.SUCCESS.getCode(), RespCodeEnum.SUCCESS.getMessage(), null));
             EMPTY_SUCCESS = new SoftReference<>(result);
         }
         return result;
@@ -206,7 +206,7 @@ public class RespResult<T> extends ResponseEntity<RespBody<T>> implements Serial
     private static RespResult<Object> buildEmptyFailure() {
         RespResult<Object> result = EMPTY_FAILURE == null ? null : EMPTY_FAILURE.get();
         if (result == null) {
-            result = new RespResult<>(HttpStatus.OK, new RespBody<>(RespCodeEnum.PARAMETER_ERROR.getCode(), RespCodeEnum.PARAMETER_ERROR.getMessage(), new Object()));
+            result = new RespResult<>(HttpStatus.OK, new RespBody<>(RespCodeEnum.PARAMETER_ERROR.getCode(), RespCodeEnum.PARAMETER_ERROR.getMessage(), null));
             EMPTY_FAILURE = new SoftReference<>(result);
         }
         return result;

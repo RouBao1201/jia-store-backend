@@ -3,6 +3,7 @@ package com.roubao.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.ToString;
 
@@ -19,6 +20,7 @@ import java.util.Date;
  **/
 @Data
 @ToString
+@TableName(value = "role_permission")
 public class RolePermissionDO implements Serializable {
     @Serial
     private static final long serialVersionUID = 5601382456423065345L;

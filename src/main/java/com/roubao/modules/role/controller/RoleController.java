@@ -7,6 +7,7 @@ import com.roubao.domain.RoleDO;
 import com.roubao.modules.role.request.RoleChangedStatusRequest;
 import com.roubao.modules.role.request.RolePageQueryRequest;
 import com.roubao.modules.role.request.RolePermissionQueryRequest;
+import com.roubao.modules.role.request.RolePermissionChangedRequest;
 import com.roubao.modules.role.request.RoleSaveRequest;
 import com.roubao.modules.role.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,5 +68,12 @@ public class RoleController {
     @PostMapping("/listRolePermissions")
     public RespResult<List<PermissionDO>> listRolePermissions(@Validated @RequestBody RolePermissionQueryRequest request) {
         return RespResult.success(roleService.listRolePermissions(request.getId()));
+    }
+
+    @Operation(summary = "查询角色权限", description = "查询角色权限")
+    @PostMapping("/changeRolePermissions")
+    public RespResult<Object> changeRolePermissions(@Validated @RequestBody RolePermissionChangedRequest request) {
+        roleService.changeRolePermissions(request);
+        return RespResult.success();
     }
 }

@@ -1,12 +1,16 @@
 package com.roubao.modules.role.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.roubao.common.response.PageList;
 import com.roubao.domain.PermissionDO;
 import com.roubao.domain.RoleDO;
+import com.roubao.domain.RolePermissionDO;
 import com.roubao.modules.role.mapper.RoleMapper;
+import com.roubao.modules.role.mapper.RolePermissionMapper;
 import com.roubao.modules.role.request.RoleChangedStatusRequest;
 import com.roubao.modules.role.request.RolePageQueryRequest;
+import com.roubao.modules.role.request.RolePermissionChangedRequest;
 import com.roubao.modules.role.request.RoleSaveRequest;
 import com.roubao.modules.role.service.RoleService;
 import com.roubao.util.PageUtils;
@@ -33,6 +37,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private RoleMapper roleMapper;
+
+    @Autowired
+    private RolePermissionMapper rolePermissionMapper;
 
     @Override
     public PageList<RoleDO> listPage(RolePageQueryRequest request) {
@@ -69,5 +76,26 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<PermissionDO> listRolePermissions(Integer roleId) {
         return roleMapper.listRolePermissions(roleId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void changeRolePermissions(RolePermissionChangedRequest request) {
+        if ("REMOVE".equals(request.getType())) {
+            LambdaUpdateWrapper<RolePermissionDO> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.eq(RolePermissionDO::getRoleId, request.getRoleId());
+            wrapper.in(RolePermissionDO::getPermissionId, request.getPermissionIds());
+            rolePermissionMapper.delete(wrapper);
+        } else {
+            RolePermissionDO permission;
+            for (Integer permissionId : request.getPermissionIds()) {
+                permission = new RolePermissionDO();
+                permission.setRoleId(request.getRoleId());
+                permission.setPermissionId(permissionId);
+                permission.setCreateTime(new Date());
+                permission.setUpdateTime(new Date());
+                rolePermissionMapper.insert(permission);
+            }
+        }
     }
 }

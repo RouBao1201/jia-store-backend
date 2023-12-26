@@ -5,6 +5,7 @@ import com.roubao.domain.PermissionDO;
 import com.roubao.domain.RoleDO;
 import com.roubao.modules.role.request.RoleChangedStatusRequest;
 import com.roubao.modules.role.request.RolePageQueryRequest;
+import com.roubao.modules.role.request.RolePermissionChangedRequest;
 import com.roubao.modules.role.request.RoleSaveRequest;
 
 import java.util.List;
@@ -50,7 +51,14 @@ public interface RoleService {
     /**
      * 查询角色权限
      *
-     * @param id 角色ID
+     * @param roleId 角色ID
      */
     List<PermissionDO> listRolePermissions(Integer roleId);
+
+    /**
+     * 修改角色权限
+     *
+     * @param request 请求体
+     */
+    void changeRolePermissions(RolePermissionChangedRequest request);
 }
